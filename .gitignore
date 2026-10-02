@@ -1,0 +1,17 @@
+node_modules/
+.env
+.env.*
+!.env.example
+!.env.*.example
+coverage/
+dist/
+.local-accounts.txt
+.reference/
+test-results/
+playwright-report/
+*.bacpac
+*.bak
+*.dump
+*.mdf
+*.ldf
+*.log

@@ -1,0 +1,843 @@
+/* Ported from Jeyarrr/TasteNet Users/Rider/Profile.aspx, commit a7ba463. */
+
+        .original-rider-profile {
+            --primary-maroon: #6b0d1e;
+            --primary-maroon-dark: #5a0b19;
+            --soft-cream: #fffaf3;
+            --text-dark: #4a0e0e;
+            --muted-text: #8a6d6d;
+            --success-green: #2d9d78;
+            --success-green-light: #e6f4f1;
+            --warning-orange: #d97706;
+            --warning-orange-light: #fff3e6;
+            --danger-red: #b91c1c;
+            --danger-red-light: #fee2e2;
+            --accent-pink: #f9ecee;
+            --accent-blue: #eff6ff;
+            --accent-blue-dark: #3b82f6;
+            --accent-purple: #7c3aed;
+            --accent-purple-light: #f3e8ff;
+            --border-light: #e2d1d1;
+            --border-hover: #d4b8b8;
+            --bg-hover: #fefaf5;
+            --bg-lighter: #f9f4ee;
+            --card-shadow: 0 10px 30px rgba(107, 13, 30, 0.05);
+            --card-shadow-hover: 0 15px 40px rgba(107, 13, 30, 0.12);
+            --button-shadow: 0 4px 12px rgba(107, 13, 30, 0.2);
+            --radius-sm: 8px;
+            --radius-md: 10px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+            --transition-base: 0.3s ease;
+        }
+        .original-rider-profile, .original-rider-profile, .original-rider-profile {
+            margin: 0 !important;
+            padding: 0 !important;
+            background-color: var(--soft-cream) !important;
+            width: 100%;
+            font-family: 'Poppins', sans-serif;
+            color: var(--text-dark);
+            min-height: 100vh;
+        }
+
+        .original-rider-profile * {
+            box-sizing: border-box;
+        }
+
+        .original-rider-profile .profile-wrapper {
+            padding: 20px 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+            min-height: 100vh;
+        }
+        .original-rider-profile .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .original-rider-profile .header-title h1 {
+            color: var(--text-dark);
+            font-weight: 700;
+            margin: 0;
+            font-size: 28px;
+            letter-spacing: -0.5px;
+        }
+
+        .original-rider-profile .header-title p {
+            color: var(--muted-text);
+            margin: 5px 0 0 0;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .original-rider-profile .profile-header-card {
+            background: white;
+            padding: 25px;
+            border-radius: var(--radius-xl);
+            margin-bottom: 25px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--border-light);
+            transition: all var(--transition-base);
+        }
+
+        .original-rider-profile .profile-header-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--card-shadow-hover);
+            border-color: var(--border-hover);
+        }
+
+        .original-rider-profile .profile-header-content {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .original-rider-profile .profile-avatar {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-maroon), var(--primary-maroon-dark));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 28px;
+            box-shadow: 0 4px 12px rgba(107, 13, 30, 0.2);
+            border: 3px solid white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .original-rider-profile .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .original-rider-profile .profile-info {
+            flex: 1;
+        }
+
+        .original-rider-profile .profile-name {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 5px;
+        }
+
+        .original-rider-profile .profile-id {
+            color: var(--muted-text);
+            font-size: 13px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .original-rider-profile .profile-id i {
+            color: var(--primary-maroon);
+            font-size: 12px;
+        }
+
+        .original-rider-profile .profile-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 12px;
+            background: var(--success-green-light);
+            color: var(--success-green);
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            border: 1px solid var(--success-green);
+        }
+        .original-rider-profile .content-section {
+            background: white;
+            padding: 25px;
+            border-radius: var(--radius-xl);
+            margin-bottom: 25px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--border-light);
+            transition: all var(--transition-base);
+        }
+
+        .original-rider-profile .content-section:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--card-shadow-hover);
+            border-color: var(--border-hover);
+        }
+
+        .original-rider-profile .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .original-rider-profile .section-title {
+            font-size: 18px;
+            color: var(--text-dark);
+            font-weight: 600;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .original-rider-profile .section-title i {
+            color: var(--primary-maroon);
+            font-size: 16px;
+            background: var(--accent-pink);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .original-rider-profile .personal-info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .original-rider-profile .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .original-rider-profile .full-width {
+            grid-column: span 2;
+        }
+
+        .original-rider-profile .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .original-rider-profile .form-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .original-rider-profile .form-label i {
+            color: var(--primary-maroon);
+            font-size: 11px;
+        }
+
+        .original-rider-profile .form-input {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-light);
+            background: white;
+            color: var(--text-dark);
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            transition: all var(--transition-base);
+        }
+
+        .original-rider-profile .form-input:hover {
+            border-color: var(--border-hover);
+        }
+
+        .original-rider-profile .form-input:focus {
+            outline: none;
+            border-color: var(--primary-maroon);
+            box-shadow: 0 0 0 3px rgba(107, 13, 30, 0.1);
+        }
+
+        .original-rider-profile .form-input:disabled {
+            background: var(--bg-lighter);
+            cursor: not-allowed;
+        }
+        .original-rider-profile .section-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .original-rider-profile .btn-primary {
+            background: var(--primary-maroon);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all var(--transition-base);
+            box-shadow: var(--button-shadow);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .original-rider-profile .btn-primary:hover {
+            background: var(--primary-maroon-dark);
+            transform: translateY(-2px);
+        }
+
+        .original-rider-profile .btn-secondary {
+            background: transparent;
+            color: var(--primary-maroon);
+            border: 1px solid var(--primary-maroon);
+            padding: 12px 28px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all var(--transition-base);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .original-rider-profile .btn-secondary:hover {
+            background: var(--accent-pink);
+        }
+        .original-rider-profile .documents-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .original-rider-profile .document-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            border-radius: var(--radius-lg);
+            background: var(--bg-lighter);
+            border: 1px solid var(--border-light);
+            transition: all var(--transition-base);
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .original-rider-profile .document-item:hover {
+            background: var(--bg-hover);
+            border-color: var(--border-hover);
+        }
+
+        .original-rider-profile .document-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex: 1;
+        }
+
+        .original-rider-profile .document-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .original-rider-profile .document-name i {
+            color: var(--primary-maroon);
+            font-size: 16px;
+        }
+
+        .original-rider-profile .document-status {
+            padding: 4px 10px;
+            border-radius: var(--radius-sm);
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .original-rider-profile .status-verified {
+            background: var(--success-green-light);
+            color: var(--success-green);
+            border: 1px solid var(--success-green);
+        }
+
+        .original-rider-profile .status-pending {
+            background: var(--warning-orange-light);
+            color: var(--warning-orange);
+            border: 1px solid var(--warning-orange);
+        }
+
+        .original-rider-profile .status-rejected {
+            background: var(--danger-red-light);
+            color: var(--danger-red);
+            border: 1px solid var(--danger-red);
+        }
+
+        .original-rider-profile .btn-file-reupload {
+            background: var(--danger-red-light) !important;
+            color: var(--danger-red) !important;
+            border: 1px solid var(--danger-red) !important;
+            animation: rider-profile-pulse-red 1.5s infinite;
+        }
+
+        @keyframes rider-profile-pulse-red {
+            0%   { box-shadow: 0 0 0 0 rgba(220,53,69,0.4); }
+            70%  { box-shadow: 0 0 0 6px rgba(220,53,69,0); }
+            100% { box-shadow: 0 0 0 0 rgba(220,53,69,0); }
+        }
+
+        .original-rider-profile .document-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .original-rider-profile .btn-icon {
+            padding: 8px 16px;
+            border-radius: var(--radius-md);
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .original-rider-profile .btn-view {
+            background: var(--accent-blue);
+            color: var(--accent-blue-dark);
+            border: 1px solid var(--accent-blue-dark);
+        }
+
+        .original-rider-profile .btn-view:hover {
+            background: var(--accent-blue-dark);
+            color: white;
+        }
+
+        .original-rider-profile .btn-upload {
+            background: var(--primary-maroon);
+            color: white;
+        }
+
+        .original-rider-profile .btn-upload:hover {
+            background: var(--primary-maroon-dark);
+            transform: translateY(-1px);
+        }
+
+        .original-rider-profile .btn-file {
+            background: var(--bg-light);
+            color: var(--text-dark);
+            border: 1px solid var(--border-light);
+            padding: 8px 16px;
+            border-radius: var(--radius-md);
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .original-rider-profile .btn-file:hover {
+            background: var(--border-light);
+        }
+        .original-rider-profile .password-form {
+            max-width: 450px;
+            margin: 0 auto;
+        }
+        
+        .original-rider-profile .password-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        
+        .original-rider-profile .password-wrapper .form-input {
+            flex: 1;
+            padding-right: 45px;
+        }
+        
+        .original-rider-profile .toggle-password {
+            position: absolute;
+            right: 15px;
+            cursor: pointer;
+            color: var(--muted-text);
+            font-size: 16px;
+            transition: all var(--transition-base);
+            z-index: 10;
+        }
+        
+        .original-rider-profile .toggle-password:hover {
+            color: var(--primary-maroon);
+        }
+
+        .original-rider-profile .password-note {
+            color: var(--muted-text);
+            font-size: 11px;
+            margin-top: 5px;
+        }
+        .original-rider-profile .modal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            animation: rider-profile-fadeIn 0.3s ease;
+        }
+
+        .original-rider-profile .modal-content {
+            position: relative;
+            background-color: white;
+            margin: 5% auto;
+            padding: 25px;
+            width: 90%;
+            max-width: 800px;
+            border-radius: var(--radius-xl);
+            box-shadow: 0 5px 30px rgba(0,0,0,0.3);
+            border: 1px solid var(--border-light);
+            animation: rider-profile-slideDown 0.3s ease;
+        }
+
+        .original-rider-profile .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-light);
+            margin-bottom: 20px;
+        }
+
+        .original-rider-profile .modal-header h3 {
+            margin: 0;
+            color: var(--text-dark);
+            font-size: 18px;
+        }
+
+        .original-rider-profile .close-modal {
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            color: var(--muted-text);
+            transition: all var(--transition-base);
+        }
+
+        .original-rider-profile .close-modal:hover {
+            color: var(--danger-red);
+        }
+
+        .original-rider-profile .modal-body {
+            text-align: center;
+        }
+
+        .original-rider-profile .modal-body img {
+            max-width: 100%;
+            max-height: 500px;
+            border-radius: var(--radius-lg);
+        }
+
+        .original-rider-profile .modal-body iframe {
+            width: 100%;
+            height: 500px;
+            border: none;
+            border-radius: var(--radius-lg);
+        }
+        @keyframes rider-profile-fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes rider-profile-slideDown {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes rider-profile-slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes rider-profile-slideOutRight {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+        @media (max-width: 992px) {
+            .original-rider-profile .profile-wrapper {
+                padding: 20px;
+            }
+
+            .original-rider-profile .page-header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 15px;
+            }
+
+            .original-rider-profile .header-title h1 {
+                font-size: 24px;
+            }
+
+            .original-rider-profile .profile-header-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+
+            .original-rider-profile .profile-id {
+                justify-content: center;
+            }
+
+            .original-rider-profile .profile-status {
+                margin: 0 auto;
+            }
+
+            .original-rider-profile .personal-info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .original-rider-profile .full-width {
+                grid-column: span 1;
+            }
+
+            .original-rider-profile .form-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        @media (max-width: 768px) {
+            .original-rider-profile .profile-wrapper {
+                padding: 12px;
+            }
+            .original-rider-profile .form-input {
+                font-size: 16px;
+            }
+
+            .original-rider-profile .profile-header-card,
+            .original-rider-profile .content-section {
+                padding: 18px 16px;
+                border-radius: var(--radius-lg);
+            }
+            .original-rider-profile .profile-avatar {
+                width: 80px;
+                height: 80px;
+                font-size: 24px;
+                margin: 0 auto;
+            }
+
+            .original-rider-profile .profile-name {
+                font-size: 18px;
+            }
+            .original-rider-profile .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .original-rider-profile .section-title {
+                font-size: 15px;
+            }
+
+            .original-rider-profile .section-title i {
+                width: 32px;
+                height: 32px;
+                font-size: 13px;
+            }
+            .original-rider-profile .personal-info-grid,
+            .original-rider-profile .form-grid {
+                grid-template-columns: 1fr;
+                gap: 14px;
+            }
+
+            .original-rider-profile .full-width {
+                grid-column: span 1;
+            }
+            .original-rider-profile .section-actions {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .original-rider-profile .btn-primary,
+            .original-rider-profile .btn-secondary {
+                width: 100%;
+                justify-content: center;
+                padding: 14px 20px;
+                font-size: 14px;
+            }
+            .original-rider-profile .document-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+                padding: 14px;
+            }
+
+            .original-rider-profile .document-info {
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .original-rider-profile .document-name {
+                font-size: 13px;
+            }
+
+            .original-rider-profile .document-actions {
+                width: 100%;
+                justify-content: flex-start;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+            .original-rider-profile .btn-icon {
+                padding: 10px 14px;
+                font-size: 12px;
+            }
+
+            .original-rider-profile .btn-file {
+                padding: 10px 14px;
+            }
+            .original-rider-profile .password-form {
+                max-width: 100%;
+            }
+            .original-rider-profile .modal-content {
+                margin: 10% auto;
+                width: 95%;
+                padding: 18px 14px;
+            }
+
+            .original-rider-profile .modal-body iframe {
+                height: 300px;
+            }
+
+            .original-rider-profile .modal-body img {
+                max-height: 300px;
+            }
+            .original-rider-profile div[style*="position: fixed"][style*="top: 20px"] {
+                right: 10px !important;
+                left: 10px !important;
+                max-width: calc(100vw - 20px) !important;
+            }
+        }
+        @media (max-width: 480px) {
+            .original-rider-profile .profile-wrapper {
+                padding: 10px 8px;
+            }
+
+            .original-rider-profile .page-header {
+                margin-bottom: 16px;
+            }
+
+            .original-rider-profile .header-title h1 {
+                font-size: 20px;
+            }
+
+            .original-rider-profile .header-title p {
+                font-size: 12px;
+            }
+
+            .original-rider-profile .profile-header-card,
+            .original-rider-profile .content-section {
+                padding: 14px 12px;
+                margin-bottom: 14px;
+                border-radius: var(--radius-md);
+            }
+
+            .original-rider-profile .profile-avatar {
+                width: 70px;
+                height: 70px;
+                font-size: 20px;
+            }
+
+            .original-rider-profile .profile-name {
+                font-size: 16px;
+            }
+
+            .original-rider-profile .profile-id {
+                font-size: 12px;
+            }
+
+            .original-rider-profile .profile-status {
+                font-size: 11px;
+                padding: 4px 10px;
+            }
+
+            .original-rider-profile .form-input {
+                padding: 11px 12px;
+            }
+
+            .original-rider-profile .form-label {
+                font-size: 11px;
+            }
+
+            .original-rider-profile .section-title {
+                font-size: 14px;
+                gap: 8px;
+            }
+
+            .original-rider-profile .section-title i {
+                width: 28px;
+                height: 28px;
+                font-size: 12px;
+            }
+            .original-rider-profile .document-status {
+                font-size: 10px;
+                padding: 3px 8px;
+            }
+            .original-rider-profile .document-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .original-rider-profile .btn-icon,
+            .original-rider-profile .btn-file {
+                width: 100%;
+                justify-content: center;
+            }
+            .original-rider-profile .toggle-password {
+                font-size: 18px;
+                right: 12px;
+            }
+            .original-rider-profile .password-note {
+                font-size: 10px;
+            }
+            .original-rider-profile .modal-content {
+                margin: 5% auto;
+                width: 98%;
+                padding: 14px 10px;
+            }
+
+            .original-rider-profile .modal-header h3 {
+                font-size: 15px;
+            }
+
+            .original-rider-profile .modal-body iframe {
+                height: 240px;
+            }
+        }
+    

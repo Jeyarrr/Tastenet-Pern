@@ -1,0 +1,345 @@
+/* Ported from Jeyarrr/TasteNet Login.aspx, commit a7ba463. */
+
+        .original-login {
+            margin: 0;
+            padding: 12px;
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
+            background: url('/original-assets/landingpage.jpg') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-sizing: border-box;
+            overflow-x: hidden;
+        }
+
+        .original-login::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: -1;
+        }
+
+        .original-login .login-card {
+            width: calc(100% - 24px);
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+            background: #4b0000;
+            padding: clamp(20px, 5vw, 36px) clamp(16px, 4vw, 32px);
+            border-radius: 18px;
+            text-align: center;
+            color: #fff;
+            border: 2px solid #ffc107;
+            box-shadow: 0 0 6px #ffc107,
+                        0 0 12px #ffc107,
+                        0 0 24px rgba(255, 193, 7, 0.3),
+                        inset 0 0 6px rgba(255, 193, 7, 0.2);
+            transition: all 0.3s ease;
+            animation: login-glowPulse 1.5s infinite alternate;
+            box-sizing: border-box;
+        }
+
+        .original-login .logo img {
+            width: clamp(60px, 18vw, 90px);
+            margin-bottom: 8px;
+            border-radius: 50%;
+            border: solid #FFD41D;
+        }
+
+        .original-login h2 {
+            margin-top: 0;
+            margin-bottom: 18px;
+            font-weight: 600;
+            font-size: clamp(1.3em, 4vw, 1.6em);
+            font-family: 'Poppins', sans-serif;
+            letter-spacing: 0.5px;
+        }
+
+        .original-login .input-box {
+            width: 90%;
+            margin: 0 auto 15px auto;
+            position: relative;
+        }
+
+        .original-login .input-box input {
+            width: 100%;
+            height: 46px;
+            padding: 0 40px 0 15px;
+            border-radius: 25px;
+            border: none;
+            outline: none;
+            font-size: 15px;
+            font-family: 'Poppins', sans-serif;
+            box-sizing: border-box;
+            font-weight: 400;
+            letter-spacing: 0.3px;
+            background: #fff;
+            transition: all 0.3s ease;
+        }
+
+        .original-login .input-box input:focus {
+            box-shadow: 0 0 0 2px #ffc107, 0 0 10px rgba(255, 193, 7, 0.5);
+        }
+
+        .original-login .input-box input::placeholder {
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            font-weight: 300;
+            color: #888;
+        }
+
+        .original-login .password-box {
+            position: relative;
+        }
+
+        .original-login .password-box i {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%) scale(1);
+            color: #777;
+            cursor: pointer;
+            transition: transform 0.25s ease, opacity 0.25s ease;
+            font-size: 1.1em;
+        }
+
+        .original-login .password-box i.active {
+            transform: translateY(-50%) scale(1.05);
+            opacity: 0.85;
+        }
+
+        .original-login .remember-forgot {
+            width: 90%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: nowrap;
+            gap: 8px;
+            margin: 8px auto 15px auto;
+            font-size: 13px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .original-login .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .original-login .remember-me input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            accent-color: #ffc107;
+            flex-shrink: 0;
+        }
+
+        .original-login .remember-me label {
+            cursor: pointer;
+            color: #fff;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            font-size: 13px;
+            font-family: 'Poppins', sans-serif;
+            white-space: nowrap;
+        }
+
+        .original-login .remember-me:hover label {
+            color: #ffd6d6;
+        }
+
+        .original-login .forgot-password,
+        .original-login .create-account {
+            color: #ffc107;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 4px 10px;
+            border-radius: 18px;
+            background: rgba(255, 193, 7, 0.1);
+            transition: all 0.3s ease;
+            display: inline-block;
+            font-size: 13px;
+            font-family: 'Poppins', sans-serif;
+            white-space: nowrap;
+        }
+
+        .original-login .forgot-password:hover,
+        .original-login .create-account:hover {
+            background: rgba(255, 193, 7, 0.2);
+            text-decoration: none;
+            color: #fff;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 5px rgba(255, 193, 7, 0.3);
+        }
+
+        .original-login .btn-login {
+            margin-top: 10px;
+            background: transparent;
+            border: 2px solid #ffc107;
+            padding: 11px 10px;
+            width: clamp(140px, 50%, 180px);
+            color: #ffc107;
+            font-size: 15px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            letter-spacing: 1px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            box-shadow: none;
+            display: inline-block;
+        }
+
+        .original-login .btn-login:hover {
+            background: #ffc107;
+            color: #4b0000;
+            border-color: #ffc107;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 193, 7, 0.4);
+        }
+
+        .original-login .btn-login:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 5px rgba(255, 193, 7, 0.4);
+        }
+
+        .original-login .google-btn {
+            margin-top: 5px;
+            background: #fff;
+            border: 2px solid #ffc107;
+            padding: 11px 16px;
+            width: 90%;
+            max-width: 280px;
+            font-size: 14px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            color: #333;
+            white-space: nowrap;
+            box-sizing: border-box;
+        }
+
+        .original-login .google-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 193, 7, 0.4);
+            background: #fff;
+        }
+
+        .original-login .google-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 5px rgba(255, 193, 7, 0.4);
+        }
+
+        .original-login .google-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .original-login .google-icon-svg {
+            width: 20px;
+            height: 20px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        @keyframes login-glowPulse {
+            from { box-shadow: 0 0 5px #ffc107; }
+            to   { box-shadow: 0 0 12px #ffc107, 0 0 24px rgba(255, 193, 7, 0.8); }
+        }
+
+        .original-login .error-message {
+            color: #ffc107 !important;
+            background-color: transparent !important;
+            padding: 0 !important;
+            border-radius: 0 !important;
+            margin: 6px 0 !important;
+            display: block;
+            font-weight: 500;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+            border: none !important;
+            font-size: 14px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .original-login .extra-text {
+            margin-top: 8px;
+            font-size: 13px;
+            color: #fff;
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.4;
+        }
+
+        .original-login .or-text {
+            margin: 6px 0;
+            font-size: 12px;
+            color: #ffc107;
+            font-weight: 500;
+        }
+
+        .original-login .social-login {
+            display: flex;
+            justify-content: center;
+        }
+        @media (min-width: 480px) {
+            .original-login .input-box,
+            .original-login .remember-forgot {
+                width: 85%;
+            }
+        }
+        @media (min-width: 768px) {
+            .original-login .login-card {
+                width: 440px;
+                max-width: 440px;
+                padding: 36px 40px;
+            }
+
+            .original-login .logo img {
+                width: 90px;
+            }
+
+            .original-login h2 {
+                font-size: 1.7em;
+            }
+
+            .original-login .input-box,
+            .original-login .remember-forgot {
+                width: 88%;
+            }
+
+            .original-login .input-box input {
+                height: 50px;
+                font-size: 15px;
+            }
+
+            .original-login .btn-login {
+                width: 160px;
+                padding: 12px 10px;
+            }
+
+            .original-login .google-btn {
+                max-width: 300px;
+                padding: 12px 20px;
+            }
+        }
+    

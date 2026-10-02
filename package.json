@@ -1,0 +1,15 @@
+{
+  "name": "tastenet-pern",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "server": "npm --prefix backend run dev",
+    "client": "npm --prefix frontend run dev",
+    "start": "npm --prefix backend start",
+    "build": "npm --prefix frontend run build",
+    "test": "npm --prefix backend test",
+    "test:ui": "npm --prefix frontend run test:ui",
+    "db:setup": "npm --prefix backend run db:setup",
+    "db:import-bacpac": "npm --prefix backend run db:import-bacpac"
+  }
+}
