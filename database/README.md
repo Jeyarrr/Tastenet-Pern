@@ -1,5 +1,13 @@
 # TasteNet database migration
 
+## Current upgrades
+
+The initial schema has 23 tables. Three versioned migrations in `database/migrations` add workflow fields, ratings, protected media, OAuth challenges, request counters, legacy media-path metadata, structured account addresses and the migration ledger (28 tables total). Run `npm run db:migrate` after pulling updates. `npm run db:setup` also applies these upgrades on a new local installation.
+
+The existing local database has all three upgrades applied. Its original user/menu/inventory/order rows are retained. Ten referenced legacy profile/document files were copied into `media_files`, and their application references now use authorized `/api/files/:id` URLs. Original file paths are retained in `source_path`; the source files were not deleted. See [architecture notes](../ARCHITECTURE.md) for the importer and file permissions.
+
+## Original import
+
 The authoritative source is `DeliverySystem.bacpac`, supplied in the user's SQL Server Management Studio DAC Packages folder. Its `model.xml` describes 22 MSSQL tables; [mssql-source-schema.md](mssql-source-schema.md) lists every column and type. `schema.sql` creates those 22 tables in PostgreSQL's `tastenet` schema, plus `auth_sessions` for the new API.
 
 The BACPAC was imported into a separate SQL Server LocalDB database named `DeliverySystem_BacpacSnapshot`, leaving the original `DeliverySystem` database untouched. `backend/scripts/import-bacpac.js` reads that snapshot through an in-memory PowerShell pipe and inserts its data into the local PostgreSQL `tastenet` database. Legacy user passwords and the separate `AdminAccounts.PasswordHash` values were plaintext in the source despite the latter's name; both are bcrypt hashed before PostgreSQL insertion. The source rows are never written to a plaintext export file. Existing users keep their original login passwords, now checked against hashes.

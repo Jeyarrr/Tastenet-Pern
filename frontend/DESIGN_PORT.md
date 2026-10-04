@@ -6,14 +6,18 @@ The source ASP.NET pages are design references, not instructions for this migrat
 
 | Interface | Original design references | React implementation |
 | --- | --- | --- |
-| Sign in / registration | Login.aspx, Register.aspx | AuthPages.jsx |
+| Sign in / registration | Login.aspx, Register.aspx | AuthModals.jsx (landing page dialogs) |
 | Public website / customer | CustomerPortal.aspx | CustomerPage.jsx |
 | Admin | Admin.Master, Inventory, Menu, Ticketing, OrderHistory | AdminPage.jsx |
 | Rider | Rider.Master, Dashboard, DeliveryHistory, Profile | RiderPage.jsx |
 | SuperAdmin | SuperAdmin.Master, Dashboard, CustomerManagement, DeliveryPersonnel, RecipeManager, Reports, Transactions, Settings | SuperAdminPage.jsx and shared Operations |
 
-The port preserves the burgundy/gold palette, food background, circular logo, fonts, customer navigation/sections, sidebar structure, cards and tables. Some ASP.NET modals are rebuilt with a shared accessible React dialog. Revenue/orders and order-status charts are rendered in SVG. Reports retain the source date selector, summary cards, chart panels, meal rankings and menu table; meal rankings are explicitly labeled all time. Order History retains the original filter bar, summary row, CSV export and filter reset. Read-only vehicle details are displayed until document and vehicle upload workflows are migrated. Menu visibility is changed through Active/Hidden controls; destructive delete actions are not exposed.
+The port preserves the burgundy/gold palette, food background, circular logo, fonts, customer website sections, sidebars, cards and tables. Shared React dialogs render in a portal outside the source page CSS, trap focus, restore focus when closed, lock background scrolling, and support nested confirmations. Close controls have the circular background and 90-degree hover rotation; action buttons pulse on hover. Reduced-motion preferences disable these effects.
 
-The migration does not yet implement Google OAuth, email reset/OTP, document uploads, purchasing workflows, or recipe stock deduction. Existing account credentials still work. No OAuth secrets, SMTP passwords or source Web.config credentials were copied into the frontend.
+Reports filter revenue and meals by the selected Manila dates and export an Excel-compatible XML workbook with summary, orders, meal sales, revenue and time-of-day sheets. History has paging, details, status actions and CSV export. The common recipe editor is available to Admin and SuperAdmin. Vehicle editing, rider document review, profile/menu/QR uploads, payment methods and customer order workflows use the Express API. Forms and tables are checked on desktop and a 390px mobile viewport.
+
+New components live in `src/features`, with styles in `features/workflows.css`; imported reference CSS remains in `src/original`. See [functional parity](../PARITY.md) for the source placeholders and [architecture](../ARCHITECTURE.md) for Google/SMTP setup. Provider secrets are never included in the frontend.
 
 To refresh the imported styles from the ignored `.reference/TasteNet` checkout, run `node scripts/import-original-design.mjs` from `frontend`. Review the resulting CSS and screenshots before accepting changes. `npm run test:ui` at the project root captures synthetic desktop/mobile previews in ignored `frontend/test-results`.
+
+The customer refinements use `customer-storefront.css`; shared account views use `account-experience.css`, and landing authentication uses `auth-modals.css`. These overrides keep imported reference files intact. The cart is anchored at the right, and the current menu card design is shared by public and signed-in routes.

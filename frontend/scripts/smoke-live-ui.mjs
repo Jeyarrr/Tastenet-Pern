@@ -20,10 +20,11 @@ try {
     await page.route('https://www.google.com/maps/embed**', route => route.fulfill({ contentType: 'text/html', body: '<html><body>Map preview</body></html>' }));
     page.on('pageerror', error => errors.push(error.message));
     page.on('response', response => { if (response.url().startsWith(`${base}/api/`) && response.status() >= 400) failedApi.push(`${response.status()} ${new URL(response.url()).pathname}`); });
-    const tabs = role === 'customer' ? [null] : role === 'admin' ? ['inventory', 'menu', 'tickets', 'history'] : role === 'rider' ? ['dashboard', 'history', 'profile'] : ['dashboard', 'inventory', 'recipes', 'menu', 'tickets', 'transactions', 'reports', 'customers', 'personnel', 'settings'];
+    const tabs = role === 'customer' ? [null] : role === 'admin' ? ['inventory', 'recipes', 'menu', 'tickets', 'history'] : role === 'rider' ? ['dashboard', 'history', 'profile'] : ['dashboard', 'inventory', 'recipes', 'menu', 'tickets', 'transactions', 'reports', 'customers', 'personnel', 'settings'];
     for (const tab of tabs) {
       await page.goto(`/${role}${tab ? `?page=${tab}` : ''}`, { waitUntil: 'networkidle' });
       await page.locator('main, .hero-container').first().waitFor({ state: 'visible', timeout: 20000 });
+      assert.equal(await page.getByRole('heading',{name:'This page could not load'}).count(),0,'No error boundary fallback');
       assert.equal(await page.locator('.migration-notice.error').count(), 0, `${role}/${tab} server error notice`);
       if (role === 'customer') {
         const images = page.locator('.menu-featured-img');

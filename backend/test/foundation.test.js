@@ -6,6 +6,7 @@ import path from 'node:path';
 import { PGlite } from '@electric-sql/pglite';
 import { createApp } from '../src/app.js';
 import { authorize, createSession } from '../src/auth.js';
+import { migrate } from '../src/migrations.js';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const config = {
@@ -20,9 +21,11 @@ test('schema, synthetic seed, and auth HTTP flow', async () => {
   await db.exec(schema);
   await db.exec(seed);
   await db.exec(seed);
-  db.connect = async () => ({ query: (...args) => db.query(...args), release: () => {} });
+  db.connect = async () => ({ query: (sql, params) => !params && sql.includes(';') ? db.exec(sql) : db.query(sql, params), release: () => {} });
   const tables = await db.query("SELECT table_name FROM information_schema.tables WHERE table_schema = 'tastenet'");
   assert.equal(tables.rows.length, 23);
+  await migrate(db);
+  await migrate(db);
   assert.equal((await db.query('SELECT count(*)::int AS n FROM tastenet.users')).rows[0].n, 0);
   assert.equal((await db.query('SELECT count(*)::int AS n FROM tastenet.menu')).rows[0].n, 1);
   assert.equal((await db.query('SELECT count(*)::int AS n FROM tastenet.delivery_fees')).rows[0].n, 2);
@@ -45,7 +48,7 @@ test('schema, synthetic seed, and auth HTTP flow', async () => {
 
     const registration = {
       username: 'sample_customer', email: 'sample@example.test',
-      password: 'a-long-sample-password', fullName: 'Sample Customer'
+      password: 'A-long-sample-password1!', fullName: 'Sample Customer'
     };
     const register = await request('/api/auth/register', { method: 'POST',
       body: JSON.stringify({ ...registration, role: 'superadmin' }) });
@@ -96,9 +99,9 @@ test('schema, synthetic seed, and auth HTTP flow', async () => {
     assert.equal(profile.profile.full_name, registration.fullName);
     assert.equal('password_hash' in profile.profile, false);
     const updateProfile = await request('/api/auth/profile', { method: 'PATCH', headers: { cookie },
-      body: JSON.stringify({ fullName: 'Updated Sample Customer', phone: '09123456789', gender: 'Female', address: '123 Sample Street' }) });
+      body: JSON.stringify({ fullName: 'Updated Sample Customer', email: registration.email, phone: '+639123456789', addressDetails: {houseNumber:'123',street:'Sample Street',barangay:'Sample Barangay A'}, currentPassword:registration.password }) });
     assert.equal(updateProfile.status, 200);
-    assert.equal((await updateProfile.json()).profile.address, '123 Sample Street');
+    assert.equal((await updateProfile.json()).profile.address, '123, Sample Street, Sample Barangay A, Dasmariñas, Cavite');
     assert.equal((await request('/api/auth/availability', { method: 'PATCH', headers: { cookie }, body: JSON.stringify({ status: 'online' }) })).status, 403);
     assert.equal((await request('/api/auth/availability', { method: 'PATCH', headers: { cookie: rider.cookie }, body: JSON.stringify({ status: 'online' }) })).status, 200);
     assert.equal((await db.query('SELECT rider_status FROM tastenet.users WHERE id=$1', [rider.id])).rows[0].rider_status, 'online');
@@ -115,7 +118,7 @@ test('schema, synthetic seed, and auth HTTP flow', async () => {
     assert.equal((await request('/api/staff/restock', { method: 'POST', headers: { cookie: admin.cookie }, body: JSON.stringify({ items: [...restock.items, { id: 999999, quantity: 1 }] }) })).status, 404);
     assert.equal(Number((await db.query('SELECT current_stock FROM tastenet.inventory WHERE id=$1', [ingredient.id])).rows[0].current_stock), Number(ingredient.current_stock) + 2.5, 'Restock rolls back all updates on failure');
     const recipeBody = JSON.stringify({ ingredients: [{ inventoryId: ingredient.id, quantity: .25 }] });
-    assert.equal((await request(`/api/manage/recipes/${product.id}`, { method: 'PUT', headers: { cookie: admin.cookie }, body: recipeBody })).status, 403);
+    assert.equal((await request(`/api/manage/recipes/${product.id}`, { method: 'PUT', headers: { cookie: admin.cookie }, body: recipeBody })).status, 200);
     assert.equal((await request(`/api/manage/recipes/${product.id}`, { method: 'PUT', headers: { cookie: superadmin.cookie }, body: recipeBody })).status, 200);
     const paymentId = (await db.query('SELECT id FROM tastenet.payment_methods LIMIT 1')).rows[0].id;
     assert.equal((await request(`/api/manage/payment-methods/${paymentId}`, { method: 'PATCH', headers: { cookie: superadmin.cookie }, body: JSON.stringify({ isEnabled: true, instructions: 'Sample payment instructions', accountDetails: '' }) })).status, 200);
@@ -129,14 +132,22 @@ test('schema, synthetic seed, and auth HTTP flow', async () => {
     const start = await request(`/api/orders/${order.id}/status`, { method: 'PATCH',
       headers: { cookie: admin.cookie }, body: JSON.stringify({ status: 'In Progress' }) });
     assert.equal(start.status, 200);
+    assert.equal((await request(`/api/orders/${order.id}/status`, { method: 'PATCH',
+      headers: { cookie: rider.cookie }, body: JSON.stringify({ status: 'Completed' }) })).status, 400);
+    const upload = await fetch(`${base}/api/files?purpose=delivery-proof&ticketId=${order.id}`, {
+      method: 'POST', headers: { cookie: rider.cookie, origin: config.CLIENT_ORIGIN, 'content-type': 'image/png' },
+      body: Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+a5WQAAAAASUVORK5CYII=', 'base64')
+    });
+    assert.equal(upload.status, 201);
+    const proof = await upload.json();
     const finish = await request(`/api/orders/${order.id}/status`, { method: 'PATCH',
-      headers: { cookie: rider.cookie }, body: JSON.stringify({ status: 'Completed' }) });
+      headers: { cookie: rider.cookie }, body: JSON.stringify({ status: 'Completed', proofUrl: proof.url }) });
     assert.equal(finish.status, 200);
 
     const extraLogin = await request('/api/auth/login', { method: 'POST', body: JSON.stringify({ identifier: registration.username, password: registration.password }) });
     const extraCookie = extraLogin.headers.get('set-cookie').split(';')[0];
-    assert.equal((await request('/api/auth/password', { method: 'PATCH', headers: { cookie }, body: JSON.stringify({ currentPassword: 'wrong', newPassword: 'another-long-sample-password' }) })).status, 400);
-    assert.equal((await request('/api/auth/password', { method: 'PATCH', headers: { cookie }, body: JSON.stringify({ currentPassword: registration.password, newPassword: 'another-long-sample-password' }) })).status, 200);
+    assert.equal((await request('/api/auth/password', { method: 'PATCH', headers: { cookie }, body: JSON.stringify({ currentPassword: 'wrong', newPassword: 'Another-long-sample-password2!' }) })).status, 400);
+    assert.equal((await request('/api/auth/password', { method: 'PATCH', headers: { cookie }, body: JSON.stringify({ currentPassword: registration.password, newPassword: 'Another-long-sample-password2!' }) })).status, 200);
     assert.equal((await request('/api/auth/me', { headers: { cookie: extraCookie } })).status, 401, 'Other sessions revoked after password change');
     assert.equal((await request('/api/auth/me', { headers: { cookie } })).status, 200);
     const logout = await request('/api/auth/logout', { method: 'POST', headers: { cookie } });

@@ -10,6 +10,7 @@
     "test": "npm --prefix backend test",
     "test:ui": "npm --prefix frontend run test:ui",
     "db:setup": "npm --prefix backend run db:setup",
-    "db:import-bacpac": "npm --prefix backend run db:import-bacpac"
+    "db:import-bacpac": "npm --prefix backend run db:import-bacpac",
+    "db:migrate": "npm --prefix backend run db:migrate"
   }
 }

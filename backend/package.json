@@ -13,7 +13,10 @@
     "db:import-bacpac": "node scripts/import-bacpac.js",
     "test": "node --test",
     "test:live": "node scripts/smoke-live.js",
-    "check": "node --check src/server.js"
+    "check": "node --check src/server.js",
+    "db:migrate": "node scripts/migrate.js",
+    "db:import-media": "node scripts/import-legacy-media.js",
+    "auth:prune": "node scripts/prune-auth.js"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
@@ -21,6 +24,8 @@
     "cors": "^2.8.6",
     "dotenv": "^18.0.5",
     "express": "^5.2.1",
+    "google-auth-library": "^11.1.0",
+    "nodemailer": "^10.0.13",
     "pg": "^8.23.1",
     "zod": "^4.6.5"
   },

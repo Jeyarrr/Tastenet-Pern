@@ -1,0 +1,230 @@
+.account-profile-panel {
+  color: #512931;
+}
+.account-profile-heading {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 8px 0 26px;
+  flex-wrap: wrap;
+}
+.account-profile-heading h2 {
+  margin: 6px 0;
+  font-size: 23px;
+  color: #651b2a;
+}
+.account-profile-heading p {
+  margin: 0;
+  color: #96776c;
+  font-size: 13px;
+}
+.account-profile-heading > .migration-button {
+  margin-left: auto;
+}
+.account-eyebrow {
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  font-weight: 700;
+  color: #9c733c;
+}
+.account-photo-button {
+  position: relative;
+  display: inline-flex;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.account-photo-button .account-avatar {
+  width: 88px;
+  height: 88px;
+  flex-basis: 88px;
+}
+.account-photo-edit-icon {
+  position: absolute;
+  right: -2px;
+  bottom: 0;
+  border-radius: 50%;
+  border: 3px solid white;
+  background: #75172b;
+  color: white;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+}
+.account-photo-preview {
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+#overlays .account-photo-preview .account-avatar {
+  width: min(260px, 65vw);
+  height: min(260px, 65vw);
+  font-size: 72px;
+}
+.account-info-section {
+  border-top: 1px solid #ecdcd1;
+  padding: 22px 0;
+}
+.account-info-section h3,
+.account-editor h3 {
+  color: #702234;
+  font-size: 15px;
+  margin: 0 0 18px;
+}
+.account-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  margin: 0;
+}
+.account-info-grid dt {
+  font-size: 11px;
+  color: #957d72;
+  margin-bottom: 7px;
+}
+.account-info-grid dd {
+  font-size: 14px;
+  margin: 0;
+  overflow-wrap: anywhere;
+  font-weight: 600;
+}
+.account-legacy-address {
+  font-size: 14px;
+  color: #806559;
+  line-height: 1.7;
+}
+.account-fields-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  width: 100%;
+}
+.account-fields-grid label {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.account-photo-editor {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 8px;
+}
+.account-photo-editor p {
+  color: #9a7c6f;
+  font-size: 12px;
+  max-width: 280px;
+  line-height: 1.7;
+}
+.account-confirmation {
+  padding: 20px;
+  background: #fff8e9;
+  border: 1px solid #efdfbc;
+  border-radius: 12px;
+  margin-top: 10px;
+}
+.account-confirmation small {
+  display: block;
+  margin-top: 10px;
+  color: #937864;
+}
+:is(#root, #overlays) .account-checkbox {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+:is(#root, #overlays) .account-checkbox input {
+  width: 17px;
+  height: 17px;
+}
+.account-phone-input {
+  display: flex;
+  width: 100%;
+  position: relative;
+  align-items: center;
+}
+.phone-country {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  position: absolute;
+  left: 13px;
+  font-size: 13px;
+  color: #704e48;
+  z-index: 1;
+  font-weight: 600;
+}
+.phone-country svg {
+  width: 25px;
+  height: 18px;
+  border-radius: 2px;
+  border: 1px solid #ddd;
+}
+:is(#root, #overlays) .account-phone-input > input {
+  width: 100%;
+  padding-left: 96px;
+  min-width: 0;
+}
+.original-rider-profile .account-profile-panel {
+  padding: 26px;
+  background: white;
+  border-radius: 18px;
+  border: 1px solid #eee2d8;
+  margin-bottom: 24px;
+}
+#root .original-settings .settings-card,
+#root .original-settings .settings-card:hover {
+  transform: none;
+  transition: box-shadow 180ms ease;
+}
+@media (max-width: 600px) {
+  .account-profile-heading {
+    gap: 14px;
+  }
+  .account-profile-heading > .migration-button {
+    width: 100%;
+    margin-left: 0;
+  }
+  .account-info-grid {
+    gap: 18px 14px;
+  }
+  .account-fields-grid {
+    gap: 14px 10px;
+  }
+  .account-profile-heading h2 {
+    font-size: 20px;
+  }
+  .original-rider-profile .account-profile-panel {
+    padding: 18px;
+  }
+  .account-info-grid dd {
+    font-size: 12px;
+  }
+  .account-photo-editor {
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 600px) {
+  #overlays .account-editor .account-phone-input > input {
+    padding-left: 72px;
+    font-size: 11px;
+  }
+  .account-editor .phone-country {
+    left: 8px;
+    gap: 4px;
+    font-size: 11px;
+  }
+  .account-editor .phone-country svg {
+    width: 19px;
+  }
+}

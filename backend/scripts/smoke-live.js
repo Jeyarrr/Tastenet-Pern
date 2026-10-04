@@ -18,6 +18,7 @@ try {
     const token = await createSession(db, person.id, config); tokens.push(token);
     const headers = { cookie: `${config.SESSION_COOKIE_NAME}=${token}` };
     const routes = ['/api/auth/me', '/api/auth/profile', '/api/orders', '/api/menu'];
+    if (role === 'rider') routes.push('/api/auth/documents');
     if (['admin', 'superadmin'].includes(role)) routes.push('/api/staff/inventory', '/api/staff/menu', '/api/staff/inventory-categories', '/api/manage/riders');
     if (role === 'superadmin') routes.push(...['overview', 'dashboard', 'users', 'recipes', 'transactions', 'settings'].map(route => `/api/manage/${route}`));
     for (const route of routes) {
@@ -25,6 +26,24 @@ try {
       assert.equal(response.status, 200, `${role} ${route}`);
       const body = await response.json();
       assert.ok(!body.error, `${role} ${route}`);
+      if (route === '/api/manage/users') {
+        let photos = 0;
+        for (const person of body.items) {
+          if (!['customer', 'rider'].includes(person.role) || !person.profile_photo?.startsWith('/api/files/')) continue;
+          assert.equal((await fetch(base + person.profile_photo, { headers })).status, 200, 'Superadmin can load account profile photo');
+          photos++;
+        }
+        console.log(`Superadmin profile photos: ${photos} protected images loaded`);
+      }
+      if(route==='/api/auth/profile' && body.profile.profile_photo?.startsWith('/api/files/')) {
+        assert.equal((await fetch(base+body.profile.profile_photo,{headers})).status,200,'Profile media loads');
+      }
+      if(route==='/api/auth/documents')for(const doc of body.items){
+        if(doc.url?.startsWith('/api/files/')) {
+          assert.equal((await fetch(base+doc.url,{headers})).status,200,'Private rider document loads');
+          assert.equal((await fetch(base+doc.url)).status,401,'Private rider document requires a session');
+        }
+      }
     }
     console.log(`${role}: ${routes.length} live routes passed`);
   }
