@@ -40,6 +40,8 @@ For a fresh empty database, configure `backend/.env` from `backend/.env.example`
 
 ## Code organization and maintenance
 
+For the hosted application setup, see [Vercel and Supabase deployment](DEPLOYMENT.md).
+
 `frontend/src/pages` composes the role screens. Feature folders under `frontend/src/features` group authentication, accounts, storefront, cart, orders, delivery, operations, management, inventory, and reports. Shared UI and form controls live in `components`; API, media, formatting, and download helpers live in `lib`. `styles/index.css` loads styles in an explicit order to preserve the original design.
 
 `backend/src/routes` defines API endpoints, `middleware` handles sessions, role checks, validation, and errors, `schemas` defines request validation, and `services` owns reusable application operations. Database SQL and versioned migrations live in `database`.

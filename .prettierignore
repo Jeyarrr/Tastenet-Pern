@@ -4,6 +4,7 @@ coverage/
 test-results/
 playwright-report/
 .reference/
+.vercel/
 .env*
 *.env
 *.env.*

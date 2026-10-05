@@ -11,6 +11,7 @@ export default [
       "**/test-results/**",
       "**/playwright-report/**",
       ".reference/**",
+      ".vercel/**",
       "frontend/public/**",
       "frontend/src/original/**",
     ],

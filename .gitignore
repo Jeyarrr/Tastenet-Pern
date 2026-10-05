@@ -4,6 +4,7 @@ coverage/
 dist/
 test-results/
 playwright-report/
+.vercel/
 *.log
 
 # Private environment files, including local variants and backup copies.

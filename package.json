@@ -2,7 +2,11 @@
   "name": "tastenet-pern",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": "24.x"
+  },
   "scripts": {
+    "db:transfer-supabase": "npm --prefix backend run db:transfer-supabase",
     "lint": "eslint . --max-warnings=0",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
