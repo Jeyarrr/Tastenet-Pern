@@ -1,0 +1,243 @@
+/* Shared interaction polish, kept separate from the imported ASP.NET styles. */
+:root {
+  --interaction-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --interaction-speed: 180ms;
+}
+
+:is(#root, #overlays)
+  :is(button, a[class*="btn"], a.action-btn, .create-account, .sign-in-link) {
+  transition-property:
+    background-color, color, border-color, box-shadow, transform, opacity;
+  transition-duration: var(--interaction-speed);
+  transition-timing-function: var(--interaction-ease);
+  -webkit-tap-highlight-color: transparent;
+}
+
+:is(#root, #overlays) :is(input, select, textarea) {
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    background-color 180ms ease;
+}
+
+:is(#root, #overlays) :is(button, a, input, select, textarea):focus-visible {
+  outline: 3px solid #e8ac1d;
+  outline-offset: 3px;
+}
+
+/* Only move action controls: overlays, password toggles and switches stay anchored. */
+@media (hover: hover) and (pointer: fine) {
+  :is(#root, #overlays)
+    :is(
+      button[class*="btn"],
+      .migration-button,
+      .admin-btn,
+      a[class*="btn"],
+      a.action-btn
+    ):not([class*="close"]):not(.password-toggle):not(:disabled):not(
+      [aria-disabled="true"]
+    ):hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(107, 13, 30, 0.18);
+    animation: tastenet-button-pulse 1.4s ease-out infinite;
+  }
+
+  :is(#root, #overlays) .migration-button:not(:disabled):hover {
+    background-color: #fff7eb;
+    border-color: #b87a49;
+  }
+
+  :is(#root, #overlays) .migration-button.primary:not(:disabled):hover {
+    background-color: #4f1111;
+    border-color: #4f1111;
+  }
+
+  :is(#root, #overlays) .migration-button.gold:not(:disabled):hover {
+    background-color: #ffd34e;
+    border-color: #ffd34e;
+  }
+
+  :is(#root, #overlays) .migration-button.danger:not(:disabled):hover {
+    background-color: #ffe0e6;
+    border-color: #cf6476;
+  }
+
+  :is(#root, #overlays) .sidebar button.menu-item:hover {
+    background-color: rgba(255, 193, 7, 0.18);
+    color: #ffd34e;
+    transform: translateX(3px);
+  }
+
+  :is(#root, #overlays)
+    :is(
+      .password-toggle,
+      .nav-icons button,
+      .migration-modal > header button
+    ):hover {
+    color: #d59a00;
+  }
+
+  :is(#root, #overlays) .original-customer .profile-dropdown-item:hover {
+    background-color: #fff3db;
+    color: #7d0a22;
+  }
+}
+
+:is(#root, #overlays)
+  :is(
+    button[class*="btn"],
+    .migration-button,
+    .admin-btn,
+    a[class*="btn"],
+    a.action-btn
+  ):not(:disabled):not([aria-disabled="true"]):active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 2px 5px rgba(107, 13, 30, 0.12);
+  transition-duration: 80ms;
+}
+
+:is(#root, #overlays) .sidebar button.menu-item:active {
+  transform: translateX(1px);
+}
+
+:is(#root, #overlays) button:disabled {
+  transform: none;
+  box-shadow: none;
+}
+
+:is(#root, #overlays) :is(.stat-card, .menu-container, .menu-card) {
+  transition:
+    transform 220ms var(--interaction-ease),
+    box-shadow 220ms var(--interaction-ease),
+    border-color 180ms ease;
+}
+
+:is(#root, #overlays) .content > *,
+:is(#root, #overlays) :is(.login-card, .register-card) {
+  animation: tastenet-reveal 240ms var(--interaction-ease);
+}
+
+:is(#root, #overlays) .migration-modal-overlay {
+  animation: tastenet-reveal 160ms ease-out;
+}
+
+:is(#root, #overlays)
+  :is(.migration-modal, .cart-modal-content, .profile-dropdown) {
+  animation: tastenet-panel-enter 220ms var(--interaction-ease);
+}
+
+:is(#root, #overlays) :is(.migration-notice, .migration-toast) {
+  animation: tastenet-reveal 180ms ease-out;
+}
+
+@keyframes tastenet-reveal {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes tastenet-panel-enter {
+  from {
+    opacity: 0;
+    translate: 0 8px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@keyframes tastenet-button-pulse {
+  0%,
+  100% {
+    box-shadow:
+      0 4px 12px rgba(107, 13, 30, 0.16),
+      0 0 0 0 rgba(211, 158, 31, 0.25);
+  }
+  65% {
+    box-shadow:
+      0 6px 18px rgba(107, 13, 30, 0.18),
+      0 0 0 7px rgba(211, 158, 31, 0);
+  }
+}
+
+:is(#root, #overlays)
+  :is(
+    .migration-close,
+    .cart-close-btn,
+    .profile-modal-close,
+    .checkout-close-btn,
+    .meal-close-btn,
+    .modal-close
+  ) {
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  line-height: 1;
+  border: 1px solid rgba(255, 215, 0, 0.25);
+  background: rgba(255, 255, 255, 0.06);
+  color: #ffdc67;
+  transition:
+    transform 260ms ease,
+    background-color 200ms ease,
+    box-shadow 200ms ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  :is(#root, #overlays)
+    :is(
+      .migration-close,
+      .cart-close-btn,
+      .profile-modal-close,
+      .checkout-close-btn,
+      .meal-close-btn,
+      .modal-close
+    ):hover {
+    transform: rotate(90deg);
+    background: rgba(255, 215, 0, 0.2);
+    color: #fff;
+    box-shadow: 0 0 0 4px rgba(255, 215, 0, 0.08);
+    animation: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :is(#root, #overlays) *,
+  :is(#root, #overlays) *::before,
+  :is(#root, #overlays) *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+
+  :is(#root, #overlays)
+    :is(
+      button[class*="btn"],
+      .migration-button,
+      .admin-btn,
+      a[class*="btn"],
+      a.action-btn,
+      .sidebar button.menu-item
+    ):is(:hover, :active) {
+    transform: none;
+  }
+  :is(#root, #overlays)
+    :is(
+      .migration-close,
+      .cart-close-btn,
+      .profile-modal-close,
+      .checkout-close-btn,
+      .meal-close-btn,
+      .modal-close
+    ):hover {
+    transform: none;
+  }
+}

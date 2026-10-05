@@ -1,5 +1,5 @@
 import nodemailer from "nodemailer";
-import { HttpError } from "../errors.js";
+import { HttpError } from "../lib/HttpError.js";
 export function emailAvailable(config) {
   return Boolean(config.SMTP_HOST && config.SMTP_FROM);
 }

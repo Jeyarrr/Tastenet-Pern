@@ -1,17 +1,33 @@
+# Dependencies and generated output
 node_modules/
-.env
-.env.*
-!.env.example
-!.env.*.example
 coverage/
 dist/
-.local-accounts.txt
-.reference/
 test-results/
 playwright-report/
+*.log
+
+# Private environment files, including local variants and backup copies.
+.env*
+*.env
+*.env.*
+# Only these credential-free setup templates belong in the repository.
+!/.env.example
+!/backend/.env.example
+!/frontend/.env.example
+
+# Local accounts and original migration references
+.local-accounts.txt
+.reference/
+
+# Database exports and local storage
 *.bacpac
 *.bak
 *.dump
 *.mdf
 *.ldf
-*.log
+
+# Local editor and operating-system files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo

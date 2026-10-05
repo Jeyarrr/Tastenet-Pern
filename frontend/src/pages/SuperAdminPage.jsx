@@ -1,38 +1,32 @@
-import { passwordPattern, passwordHelp } from "../features/AccountFields.jsx";
-import { AccountStatusDialog } from "../features/AccountStatusDialog.jsx";
-import { Avatar } from "../features/Avatar.jsx";
-import "../features/role-refinements.css";
-import { PasswordInput } from "../features/PasswordInput.jsx";
-import { Recipes } from "../features/Recipes.jsx";
-import { Transactions } from "../features/Transactions.jsx";
-import { downloadWorkbook } from "../features/exportWorkbook.js";
+import { manilaDate as day } from "../lib/format.js";
+import { SettingsSection } from "../features/management/SettingsSection.jsx";
+import { AccountsSection } from "../features/management/AccountsSection.jsx";
+import { ReportsSection } from "../features/reports/ReportsSection.jsx";
+import { DashboardSection } from "../features/management/DashboardSection.jsx";
+
+import { passwordPattern, passwordHelp } from "../lib/passwordPolicy.js";
+import { AccountStatusDialog } from "../features/management/AccountStatusDialog.jsx";
+
+import { PasswordInput } from "../components/forms/PasswordInput.jsx";
+import { Recipes } from "../features/inventory/Recipes.jsx";
+import { Transactions } from "../features/reports/Transactions.jsx";
+import { downloadWorkbook } from "../lib/exportWorkbook.js";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { api, dateTime, downloadCsv, money } from "../api.js";
-import { useAuth } from "../auth.jsx";
-import {
-  Badge,
-  Empty,
-  Icon,
-  Modal,
-  Notice,
-  PageHeader,
-  Shell,
-  Stat,
-} from "../components.jsx";
-import {
-  PersonDetails,
-  PaymentEditor,
-  QuotaEditor,
-} from "../features/ManagementDialogs.jsx";
-import { Operations, OrdersTable } from "./AdminPage.jsx";
-import "../original/dashboard.css";
-import "../original/customers.css";
-import "../original/personnel.css";
-import "../original/reports.css";
-import "../original/transactions.css";
-import "../original/recipes.css";
-import "../original/settings.css";
+import { api } from "../lib/api.js";
+import { dateTime } from "../lib/format.js";
+
+import { useAuth } from "../features/auth/AuthProvider.jsx";
+import { Notice } from "../components/ui/Feedback.jsx";
+
+import { Modal } from "../components/ui/Modal.jsx";
+
+import { Shell } from "../components/layout/RoleShell.jsx";
+
+import { PersonDetails } from "../features/management/PersonDetails.jsx";
+import { PaymentEditor } from "../features/management/PaymentEditor.jsx";
+import { QuotaEditor } from "../features/management/QuotaEditor.jsx";
+import { Operations } from "../features/operations/Operations.jsx";
 
 const tabs = [
   { id: "dashboard", label: "Dashboard", icon: "house" },
@@ -51,8 +45,7 @@ const tabs = [
   { id: "personnel", label: "Delivery", icon: "motorcycle" },
   { id: "settings", label: "Settings", icon: "gear" },
 ];
-const day = (date) =>
-  new Date(date).toLocaleDateString("en-CA", { timeZone: "Asia/Manila" });
+
 const blankStaff = {
   fullName: "",
   username: "",
@@ -352,420 +345,39 @@ export function SuperAdminPage() {
       ) : (
         <div className={`original-${tab}`}>
           {tab === "dashboard" ? (
-            <div className="dashboard-wrapper">
-              <div className="dashboard-header">
-                <div className="welcome">
-                  <h1>
-                    Welcome back, {user.fullName?.split(" ")[0] || "Admin"}!
-                  </h1>
-                  <p>Here's what's happening with your platform.</p>
-                </div>
-                {periodControls}
-              </div>
-              {customDates}
-              <Notice error={error} success={success} />
-              <div className="stat-grid">
-                {[
-                  [
-                    "Total Orders",
-                    periodOrders.length,
-                    "shopping-bag",
-                    "#d97706",
-                    "#fff9e6",
-                  ],
-                  [
-                    "Total Revenue",
-                    money(revenue),
-                    "peso-sign",
-                    "#6b0d1e",
-                    "#f9ecee",
-                  ],
-                  [
-                    "Active Users",
-                    summary?.activeUsers || 0,
-                    "users",
-                    "#2d9d78",
-                    "#edf7f4",
-                  ],
-                ].map(([label, value, icon, color, background]) => (
-                  <div
-                    className="stat-card"
-                    key={label}
-                    style={{ "--accent-color": color }}
-                  >
-                    <div className="stat-top">
-                      <div className="stat-meta">
-                        <span className="stat-label">{label}</span>
-                        <span className="stat-value">{value}</span>
-                      </div>
-                      <div className="icon-box" style={{ background, color }}>
-                        <Icon name={icon} />
-                      </div>
-                    </div>
-                    <div className="stat-trend">
-                      <Icon name="calendar-days" />{" "}
-                      {label === "Active Users"
-                        ? "Across all roles"
-                        : period.toLowerCase()}
-                    </div>
-                  </div>
-                ))}
-                <button
-                  className="stat-card quota-card"
-                  style={{
-                    "--accent-color": "#7c3aed",
-                    border: 0,
-                    textAlign: "left",
-                  }}
-                  onClick={() => {
-                    setForm(
-                      Object.fromEntries(
-                        dashboard.quotas.map((item) => [
-                          item.id,
-                          item.target_amount,
-                        ]),
-                      ),
-                    );
-                    setDialog("quota");
-                  }}
-                >
-                  <span className="quota-edit-hint">
-                    <Icon name="pen" /> Edit
-                  </span>
-                  <div className="stat-top">
-                    <div className="stat-meta">
-                      <span className="stat-label">
-                        Quota — {quota?.quota_type || "Monthly"}
-                      </span>
-                      <span className="quota-pct">{quotaPct.toFixed(0)}%</span>
-                    </div>
-                    <div
-                      className="icon-box"
-                      style={{ background: "#f3ebff", color: "#7c3aed" }}
-                    >
-                      <Icon name="bullseye" />
-                    </div>
-                  </div>
-                  <div className="quota-progress-wrap">
-                    <div className="quota-bar-bg">
-                      <div
-                        className="quota-bar-fill"
-                        style={{ width: `${Math.min(100, quotaPct)}%` }}
-                      />
-                    </div>
-                    <div className="quota-progress-row">
-                      <span>Target</span>
-                      <span className="qval">
-                        {money(quota?.target_amount)}
-                      </span>
-                    </div>
-                    <div className="quota-progress-row">
-                      <span>Sales within quota dates</span>
-                      <span className="qval">{money(quotaRevenue)}</span>
-                    </div>
-                  </div>
-                </button>
-              </div>
-              <div className="main-grid">
-                <div className="chart-box">
-                  <div className="box-title">Revenue Overview</div>
-                  <div className="chart-container">
-                    <RevenueChart series={chartSeries} />
-                  </div>
-                  <div className="chart-legend">
-                    Completed orders · {period.toLowerCase()}
-                  </div>
-                </div>
-                <div className="side-box">
-                  <div className="box-title">Top Selling Meals</div>
-                  {dashboard.topMeals.map((meal, index) => (
-                    <div className="meal-item" key={meal.food_name}>
-                      <div className={`meal-rank ${index >= 3 ? "gray" : ""}`}>
-                        {index + 1}
-                      </div>
-                      <div className="meal-info">
-                        <p className="meal-name">{meal.food_name}</p>
-                        <p className="meal-sales">
-                          {meal.quantity} sold · {period.toLowerCase()}
-                        </p>
-                      </div>
-                      <div className="meal-price">{money(meal.revenue)}</div>
-                    </div>
-                  ))}
-                  {!dashboard.topMeals.length && <Empty title="No meal data" />}
-                </div>
-              </div>
-              <div className="recent-orders-full">
-                <div className="chart-box">
-                  <div className="box-title">Recent Orders</div>
-                  <OrdersTable orders={periodOrders.slice(0, 8)} />
-                </div>
-              </div>
-            </div>
+            <DashboardSection
+              user={user}
+              summary={summary}
+              dashboard={dashboard}
+              error={error}
+              success={success}
+              setDialog={setDialog}
+              setForm={setForm}
+              period={period}
+              periodOrders={periodOrders}
+              revenue={revenue}
+              chartSeries={chartSeries}
+              quota={quota}
+              quotaRevenue={quotaRevenue}
+              quotaPct={quotaPct}
+              periodControls={periodControls}
+              customDates={customDates}
+            />
           ) : ["customers", "personnel"].includes(tab) ? (
-            <div
-              id={
-                tab === "customers"
-                  ? "customer-wrapper"
-                  : "delivery-mgmt-wrapper"
-              }
-              className="migration-section"
-            >
-              <PageHeader
-                title={
-                  tab === "customers"
-                    ? "Customer Management"
-                    : "Delivery Personnel"
-                }
-                subtitle={
-                  tab === "customers"
-                    ? "Monitor and manage all registered customers and their activities"
-                    : "Manage riders and track their delivery performance"
-                }
-              >
-                {tab === "personnel" && (
-                  <button
-                    className="migration-button primary"
-                    onClick={() => openStaff("rider")}
-                  >
-                    <Icon name="plus" /> Add New Rider
-                  </button>
-                )}
-              </PageHeader>
-              <Notice error={error} success={success} />
-              <div className="stats-grid">
-                {tab === "customers" ? (
-                  <>
-                    <Stat
-                      label="Total Customers"
-                      value={users.filter((p) => p.role === "customer").length}
-                      note="All registered accounts"
-                      icon="users"
-                      tone="total"
-                    />
-                    <Stat
-                      label="Active Customers"
-                      value={
-                        users.filter(
-                          (p) => p.role === "customer" && p.is_active,
-                        ).length
-                      }
-                      note="Currently active users"
-                      icon="user-check"
-                      tone="active"
-                    />
-                    <Stat
-                      label="Blocked"
-                      value={
-                        users.filter(
-                          (p) => p.role === "customer" && !p.is_active,
-                        ).length
-                      }
-                      note="Suspended accounts"
-                      icon="ban"
-                      tone="blocked"
-                    />
-                    <Stat
-                      label="Total Revenue"
-                      value={money(
-                        users
-                          .filter((p) => p.role === "customer")
-                          .reduce((sum, p) => sum + Number(p.total_spent), 0),
-                      )}
-                      note="From completed customer orders"
-                      icon="peso-sign"
-                      tone="revenue"
-                    />
-                  </>
-                ) : (
-                  <>
-                    <Stat
-                      label="Total Riders"
-                      value={users.filter((p) => p.role === "rider").length}
-                      note="Delivery personnel"
-                      icon="motorcycle"
-                    />
-                    <Stat
-                      label="Online Riders"
-                      value={
-                        users.filter(
-                          (p) =>
-                            p.role === "rider" &&
-                            p.rider_status?.toLowerCase() === "online",
-                        ).length
-                      }
-                      note="Available for delivery"
-                      icon="circle-check"
-                    />
-                    <Stat
-                      label="Assigned Deliveries"
-                      value={
-                        orders.filter(
-                          (o) =>
-                            o.rider_id &&
-                            !["Completed", "Cancelled"].includes(o.status),
-                        ).length
-                      }
-                      note="In the delivery queue"
-                      icon="box"
-                    />
-                    <Stat
-                      label="Completed Deliveries"
-                      value={
-                        orders.filter(
-                          (o) => o.rider_id && o.status === "Completed",
-                        ).length
-                      }
-                      note="Successfully delivered"
-                      icon="check-double"
-                    />
-                  </>
-                )}
-              </div>
-              <div className="filter-container">
-                <div className="search-box">
-                  <Icon name="magnifying-glass" />
-                  <input
-                    placeholder="Search by name, ID, email, or phone..."
-                    aria-label="Search accounts"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                  />
-                </div>
-                <select
-                  className="filter-select"
-                  value={status}
-                  onChange={(e) => setStatus(e.target.value)}
-                  aria-label="Account status"
-                >
-                  <option value="all">All Status</option>
-                  <option value="active">Active</option>
-                  <option value="blocked">Blocked</option>
-                </select>
-              </div>
-              <div className="table-container">
-                <div className="table-wrapper">
-                  <table className="custom-table">
-                    <thead>
-                      <tr>
-                        {[
-                          tab === "customers" ? "Customer ID" : "Rider ID",
-                          "Full Name",
-                          "Contact Info",
-                          tab === "customers" ? "Date Registered" : "Vehicle",
-                          "Status",
-                          tab === "customers" ? "Total Orders" : "Assigned",
-                          tab === "customers" ? "Total Spent" : "Completed",
-                          "Actions",
-                        ].map((value) => (
-                          <th key={value}>{value}</th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {people.map((person) => (
-                        <tr key={person.id}>
-                          <td>
-                            <span className="customer-id">
-                              {tab === "customers" ? "CU" : "RD"}-{person.id}
-                            </span>
-                          </td>
-                          <td>
-                            <div className="account-identity">
-                              <Avatar
-                                src={person.profile_photo}
-                                name={person.full_name}
-                              />{" "}
-                              <div className="customer-name">
-                                <span className="customer-name__primary">
-                                  {person.full_name}
-                                </span>
-                                <span className="customer-name__secondary">
-                                  {person.username}
-                                </span>
-                              </div>
-                            </div>
-                          </td>
-                          <td>
-                            <div className="customer-contact">
-                              <span className="customer-contact__email">
-                                {person.email}
-                              </span>
-                              <span className="customer-contact__phone">
-                                {person.phone}
-                              </span>
-                            </div>
-                          </td>
-                          <td>
-                            {tab === "customers"
-                              ? dateTime(person.created_at)
-                              : person.vehicle || "—"}
-                          </td>
-                          <td>
-                            <Badge
-                              value={
-                                person.is_active
-                                  ? tab === "personnel"
-                                    ? person.rider_status
-                                    : "Active"
-                                  : "Inactive"
-                              }
-                            />
-                          </td>
-                          <td>
-                            {tab === "customers"
-                              ? person.total_orders
-                              : orders.filter(
-                                  (order) =>
-                                    String(order.rider_id) ===
-                                      String(person.id) &&
-                                    !["Completed", "Cancelled"].includes(
-                                      order.status,
-                                    ),
-                                ).length}
-                          </td>
-                          <td>
-                            {tab === "customers"
-                              ? money(person.total_spent)
-                              : orders.filter(
-                                  (order) =>
-                                    String(order.rider_id) ===
-                                      String(person.id) &&
-                                    order.status === "Completed",
-                                ).length}
-                          </td>
-                          <td>
-                            <div className="action-icons">
-                              <button
-                                className="migration-button"
-                                aria-label={`View ${person.full_name}`}
-                                onClick={() =>
-                                  setDialog({ type: "person", person })
-                                }
-                              >
-                                <Icon name="eye" />
-                              </button>
-                              <button
-                                className="migration-button danger"
-                                aria-label={`${person.is_active ? "Block" : "Activate"} ${person.full_name}`}
-                                onClick={() =>
-                                  setDialog({ type: "active", person })
-                                }
-                              >
-                                <Icon
-                                  name={person.is_active ? "ban" : "check"}
-                                />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                  {!people.length && <Empty title="No accounts found" />}
-                </div>
-              </div>
-            </div>
+            <AccountsSection
+              tab={tab}
+              users={users}
+              orders={orders}
+              error={error}
+              success={success}
+              setDialog={setDialog}
+              search={search}
+              setSearch={setSearch}
+              status={status}
+              setStatus={setStatus}
+              openStaff={openStaff}
+              people={people}
+            />
           ) : tab === "recipes" ? (
             <Recipes
               recipes={recipes}
@@ -786,383 +398,40 @@ export function SuperAdminPage() {
               busy={busy}
             />
           ) : tab === "reports" ? (
-            <div className="reports-container">
-              <div className="reports-header">
-                <div className="header-info">
-                  <h2>Analytics &amp; Reports</h2>
-                  <p>Monitor business performance and customer activity</p>
-                </div>
-                <div className="header-actions">
-                  <div className="simple-date-filter">
-                    <Icon name="calendar-days" />
-                    <select
-                      value={period}
-                      onChange={(e) => setPeriod(e.target.value)}
-                      aria-label="Report period"
-                    >
-                      {[
-                        "Daily",
-                        "Weekly",
-                        "Monthly",
-                        "Yearly",
-                        "Custom",
-                        "All time",
-                      ].map((value) => (
-                        <option key={value}>{value}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <button className="btn btn--primary" onClick={exportOrders}>
-                    <Icon name="download" /> Export Report
-                  </button>
-                </div>
-              </div>
-              {customDates}
-              <Notice error={error} success={success} />
-              <div className="kpi-row">
-                <Stat
-                  label="Total Orders"
-                  value={periodOrders.length}
-                  note="Selected period"
-                  icon="shopping-bag"
-                  tone="orders"
-                />
-                <Stat
-                  label="Total Revenue"
-                  value={money(revenue)}
-                  note="Completed orders"
-                  icon="peso-sign"
-                  tone="revenue"
-                />
-                <Stat
-                  label="Avg Order Value"
-                  value={money(
-                    completed.length ? revenue / completed.length : 0,
-                  )}
-                  note="Completed orders"
-                  icon="chart-line"
-                  tone="average"
-                />
-                <Stat
-                  label="New Customers"
-                  value={
-                    users.filter(
-                      (p) =>
-                        p.role === "customer" && inPeriod(day(p.created_at)),
-                    ).length
-                  }
-                  note="Selected period"
-                  icon="user-plus"
-                  tone="customers"
-                />
-              </div>
-              <div className="dashboard-grid">
-                <div className="chart-box">
-                  <div
-                    className="migration-order-row"
-                    style={{ marginBottom: 20, flexWrap: "wrap" }}
-                  >
-                    <h3 className="chart-title" style={{ margin: 0 }}>
-                      Revenue &amp; Orders Trend
-                    </h3>
-                    <div className="btn-group">
-                      {["Revenue", "Orders"].map((value) => (
-                        <button
-                          key={value}
-                          className={
-                            "btn-chart btn-chart-" +
-                            (chartMetric === value ? "active" : "inactive")
-                          }
-                          onClick={() => setChartMetric(value)}
-                        >
-                          {value}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  <RevenueChart
-                    series={
-                      chartMetric === "Revenue" ? chartSeries : orderSeries
-                    }
-                    metric={chartMetric}
-                  />
-                </div>
-                <div className="chart-box">
-                  <h3 className="chart-title">Order Status Distribution</h3>
-                  <OrderStatusChart orders={periodOrders} />
-                  {["Open", "In Progress", "Completed", "Cancelled"].map(
-                    (value, index) => {
-                      const count = periodOrders.filter(
-                        (o) => o.status === value,
-                      ).length;
-                      return (
-                        <div className="status-item" key={value}>
-                          <span>
-                            <Icon
-                              name="circle"
-                              style={{
-                                color: [
-                                  "#ffcc00",
-                                  "#3b82f6",
-                                  "#2d9d78",
-                                  "#b91c1c",
-                                ][index],
-                              }}
-                            />
-                            {value}
-                          </span>
-                          <b>
-                            {count} (
-                            {periodOrders.length
-                              ? Math.round((count / periodOrders.length) * 100)
-                              : 0}
-                            %)
-                          </b>
-                        </div>
-                      );
-                    },
-                  )}
-                </div>
-              </div>
-              <div className="dashboard-grid">
-                <div className="chart-box">
-                  <h3 className="chart-title">Orders by Time of Day</h3>
-                  <div className="migration-bar-chart">
-                    {["12am–6am", "6am–12pm", "12pm–6pm", "6pm–12am"].map(
-                      (label, index) => {
-                        const counts = timeCounts;
-                        return (
-                          <div
-                            className="migration-bar"
-                            key={label}
-                            style={{
-                              height: counts[index]
-                                ? String(
-                                    (counts[index] / Math.max(...counts, 1)) *
-                                      100,
-                                  ) + "%"
-                                : "0",
-                              minHeight: counts[index] ? 2 : 0,
-                            }}
-                            title={label + ": " + counts[index] + " orders"}
-                          >
-                            <span>
-                              {label}
-                              <br />
-                              {counts[index]} orders
-                            </span>
-                          </div>
-                        );
-                      },
-                    )}
-                  </div>
-                </div>
-                <div className="chart-box">
-                  <h3 className="chart-title">
-                    Top Selling Meals — Selected Period
-                  </h3>
-                  {dashboard.topMeals.map((meal, index) => (
-                    <div className="restaurant-item" key={meal.food_name}>
-                      <div className="rank-circle">{index + 1}</div>
-                      <div className="res-info">
-                        <b>{meal.food_name}</b>
-                        <div className="res-bar-container">
-                          <div
-                            className="res-bar-fill"
-                            style={{
-                              width:
-                                String(
-                                  (Number(meal.quantity) /
-                                    Math.max(
-                                      ...dashboard.topMeals.map((item) =>
-                                        Number(item.quantity),
-                                      ),
-                                      1,
-                                    )) *
-                                    100,
-                                ) + "%",
-                            }}
-                          />
-                        </div>
-                      </div>
-                      <div className="res-value">{money(meal.revenue)}</div>
-                    </div>
-                  ))}
-                  {!dashboard.topMeals.length && <Empty title="No meal data" />}
-                </div>
-              </div>
-              <div className="menu-table-box">
-                <div className="table-header">
-                  <h3 className="table-title">
-                    Popular Menu Items — Selected Period
-                  </h3>
-                </div>
-                <table className="menu-table">
-                  <thead>
-                    <tr>
-                      <th>Rank</th>
-                      <th>Menu Item</th>
-                      <th>Category</th>
-                      <th>Quantity Sold</th>
-                      <th>Revenue</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {dashboard.topMeals.map((meal, index) => (
-                      <tr key={meal.food_name}>
-                        <td>
-                          <div className="rank-badge">{index + 1}</div>
-                        </td>
-                        <td>
-                          <b>{meal.food_name}</b>
-                        </td>
-                        <td>
-                          <span className="cat-badge">
-                            {menu.find(
-                              (item) => item.food_name === meal.food_name,
-                            )?.food_type || "—"}
-                          </span>
-                        </td>
-                        <td>{meal.quantity}</td>
-                        <td>{money(meal.revenue)}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
+            <ReportsSection
+              dashboard={dashboard}
+              users={users}
+              menu={menu}
+              error={error}
+              success={success}
+              chartMetric={chartMetric}
+              setChartMetric={setChartMetric}
+              period={period}
+              setPeriod={setPeriod}
+              inPeriod={inPeriod}
+              periodOrders={periodOrders}
+              completed={completed}
+              revenue={revenue}
+              chartSeries={chartSeries}
+              orderSeries={orderSeries}
+              timeCounts={timeCounts}
+              exportOrders={exportOrders}
+              customDates={customDates}
+              day={day}
+            />
           ) : tab === "transactions" ? (
             <Transactions items={transactions} />
           ) : (
-            <div id="settings-wrapper" className="migration-section">
-              <PageHeader
-                title="Platform Settings"
-                subtitle="Manage payment methods and staff accounts"
-              >
-                <button
-                  className="migration-button primary"
-                  onClick={() => openStaff("admin")}
-                >
-                  <Icon name="user-plus" /> Add Admin
-                </button>
-              </PageHeader>
-              <Notice error={error} success={success} />
-              <div className="settings-layout">
-                <div className="settings-card active">
-                  <h3>
-                    <Icon name="credit-card" /> Payment Methods
-                  </h3>
-                  <button
-                    className="migration-button primary"
-                    onClick={() => {
-                      setForm({});
-                      setDialog("payment");
-                    }}
-                  >
-                    Add Payment Method
-                  </button>
-                  <div className="pm-table-wrap">
-                    <table className="pm-table">
-                      <thead>
-                        <tr>
-                          <th>Method Name</th>
-                          <th>Account Details</th>
-                          <th>Instructions</th>
-                          <th>Status</th>
-                          <th>Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {methods.map((method) => (
-                          <tr key={method.id}>
-                            <td>{method.method_name}</td>
-                            <td>{method.account_details || "—"}</td>
-                            <td>{method.instructions || "—"}</td>
-                            <td>
-                              <Badge
-                                value={
-                                  method.is_enabled &&
-                                  method.status === "Active"
-                                    ? "Active"
-                                    : "Inactive"
-                                }
-                              />
-                            </td>
-                            <td>
-                              <button
-                                className="migration-button"
-                                onClick={() => {
-                                  setForm({
-                                    id: method.id,
-                                    qrPhoto: method.qr_photo || "",
-                                    displayOrder: method.display_order || 0,
-                                    name: method.method_name,
-                                    isEnabled:
-                                      method.is_enabled &&
-                                      method.status === "Active",
-                                    instructions: method.instructions || "",
-                                    accountDetails:
-                                      method.account_details || "",
-                                  });
-                                  setDialog("payment");
-                                }}
-                              >
-                                <Icon name="pen-to-square" /> Edit
-                              </button>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-              <div className="migration-card">
-                <h3>Staff Accounts</h3>
-                <div className="migration-table-wrap">
-                  <table className="migration-table">
-                    <thead>
-                      <tr>
-                        <th>Name</th>
-                        <th>Role</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {users
-                        .filter((person) =>
-                          ["admin", "superadmin"].includes(person.role),
-                        )
-                        .map((person) => (
-                          <tr key={person.id}>
-                            <td>{person.full_name}</td>
-                            <td>
-                              <Badge value={person.role} />
-                            </td>
-                            <td>
-                              <Badge
-                                value={person.is_active ? "Active" : "Inactive"}
-                              />
-                            </td>
-                            <td>
-                              <button
-                                className="migration-button"
-                                disabled={String(person.id) === String(user.id)}
-                                onClick={() =>
-                                  setDialog({ type: "active", person })
-                                }
-                              >
-                                {person.is_active ? "Deactivate" : "Activate"}
-                              </button>
-                            </td>
-                          </tr>
-                        ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
+            <SettingsSection
+              user={user}
+              users={users}
+              methods={methods}
+              error={error}
+              success={success}
+              setDialog={setDialog}
+              setForm={setForm}
+              openStaff={openStaff}
+            />
           )}
           {loading && (
             <p className="migration-loading">Loading platform data…</p>
@@ -1244,156 +513,5 @@ export function SuperAdminPage() {
         </div>
       )}
     </Shell>
-  );
-}
-
-function OrderStatusChart({ orders }) {
-  const total = orders.length,
-    circumference = 2 * Math.PI * 68;
-  let offset = 0;
-  return (
-    <svg
-      viewBox="0 0 240 200"
-      style={{ width: "100%", height: 200 }}
-      role="img"
-      aria-label={"Order status distribution, " + total + " orders"}
-    >
-      <circle
-        cx="120"
-        cy="100"
-        r="68"
-        fill="none"
-        stroke="#f3ebe0"
-        strokeWidth="30"
-      />
-      {["Open", "In Progress", "Completed", "Cancelled"].map(
-        (status, index) => {
-          const count = orders.filter(
-              (order) => order.status === status,
-            ).length,
-            length = total ? (count / total) * circumference : 0,
-            start = offset;
-          offset += length;
-          return (
-            <circle
-              key={status}
-              cx="120"
-              cy="100"
-              r="68"
-              fill="none"
-              stroke={["#ffcc00", "#3b82f6", "#2d9d78", "#b91c1c"][index]}
-              strokeWidth="30"
-              strokeDasharray={
-                String(length) + " " + String(circumference - length)
-              }
-              strokeDashoffset={-start}
-              transform="rotate(-90 120 100)"
-            >
-              <title>
-                {status}: {count}
-              </title>
-            </circle>
-          );
-        },
-      )}
-      <text
-        x="120"
-        y="98"
-        textAnchor="middle"
-        fontSize="24"
-        fontWeight="700"
-        fill="#6b0d1e"
-      >
-        {total}
-      </text>
-      <text x="120" y="120" textAnchor="middle" fontSize="12" fill="#8a6d6d">
-        orders
-      </text>
-    </svg>
-  );
-}
-
-function RevenueChart({ series, metric = "Revenue" }) {
-  const format =
-    metric === "Revenue" ? money : (value) => String(value) + " orders";
-  if (!series.length)
-    return (
-      <Empty
-        title={
-          metric === "Revenue"
-            ? "No completed orders for this period"
-            : "No orders for this period"
-        }
-        detail={
-          metric === "Revenue"
-            ? "Revenue appears after orders are completed."
-            : "Orders appear here when placed."
-        }
-      />
-    );
-  const max = Math.max(1, ...series.map((row) => Number(row.revenue))),
-    points = series.map(
-      (row, index) =>
-        `${45 + (index / Math.max(1, series.length - 1)) * 570},${210 - (Number(row.revenue) / max) * 170}`,
-    );
-  return (
-    <svg
-      className="migration-revenue-svg"
-      viewBox="0 0 650 250"
-      role="img"
-      aria-label={`${metric} chart, ${series.length} days, maximum ${format(max)}`}
-    >
-      <defs>
-        <linearGradient id="revenue-fill" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#7D0A22" stopOpacity=".25" />
-          <stop offset="100%" stopColor="#7D0A22" stopOpacity="0" />
-        </linearGradient>
-      </defs>
-      {[0, 0.5, 1].map((value) => (
-        <g key={value}>
-          <line
-            x1="45"
-            x2="615"
-            y1={210 - value * 170}
-            y2={210 - value * 170}
-            stroke="#efe5dc"
-          />
-          <text x="0" y={214 - value * 170} fill="#8a6d6d" fontSize="11">
-            {Math.round(max * value)}
-          </text>
-        </g>
-      ))}
-      {series.length > 1 && (
-        <polygon
-          points={`45,210 ${points.join(" ")} 615,210`}
-          fill="url(#revenue-fill)"
-        />
-      )}
-      <polyline
-        points={points.join(" ")}
-        fill="none"
-        stroke="#7D0A22"
-        strokeWidth="3"
-      />
-      {series.map((row, index) => (
-        <circle
-          key={row.date}
-          cx={45 + (index / Math.max(1, series.length - 1)) * 570}
-          cy={210 - (Number(row.revenue) / max) * 170}
-          r="4"
-          fill="#7D0A22"
-        >
-          <title>
-            {row.date}: {format(row.revenue)}
-          </title>
-        </circle>
-      ))}
-      <text x="45" y="240" fill="#8a6d6d" fontSize="12">
-        {series[0].date}
-      </text>
-      <text x="615" y="240" textAnchor="end" fill="#8a6d6d" fontSize="12">
-        {series.at(-1).date}
-      </text>
-    </svg>
   );
 }

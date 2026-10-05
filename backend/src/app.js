@@ -9,7 +9,8 @@ import { filesRouter } from "./routes/files.js";
 import { profileFeaturesRouter } from "./routes/profile-features.js";
 import { managementFeaturesRouter } from "./routes/management-features.js";
 import { authWorkflowsRouter } from "./routes/auth-workflows.js";
-import { errorHandler, notFound, HttpError } from "./errors.js";
+import { errorHandler, notFound } from "./middleware/errors.js";
+import { HttpError } from "./lib/HttpError.js";
 
 export function createApp({ db, config, authDependencies }) {
   const app = express();

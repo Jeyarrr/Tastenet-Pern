@@ -3,6 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "lint": "eslint . --max-warnings=0",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check:env": "node scripts/check-env.mjs",
+    "check": "npm run lint && npm run format:check && npm run check:env",
     "server": "npm --prefix backend run dev",
     "client": "npm --prefix frontend run dev",
     "start": "npm --prefix backend start",
@@ -12,5 +17,12 @@
     "db:setup": "npm --prefix backend run db:setup",
     "db:import-bacpac": "npm --prefix backend run db:import-bacpac",
     "db:migrate": "npm --prefix backend run db:migrate"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.39.5",
+    "eslint": "9.39.5",
+    "eslint-plugin-react": "7.37.5",
+    "globals": "17.13.0",
+    "prettier": "3.9.9"
   }
 }

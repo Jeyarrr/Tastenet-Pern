@@ -8,14 +8,15 @@ import {
 import bcrypt from "bcryptjs";
 import { OAuth2Client } from "google-auth-library";
 import { z } from "zod";
-import { validate } from "../validate.js";
-import { HttpError } from "../errors.js";
+import { validate } from "../middleware/validate.js";
+import { HttpError } from "../lib/HttpError.js";
 import { transaction } from "../services/transaction.js";
 import { rateLimit } from "../services/rate-limit.js";
 import { emailAvailable, emailSender } from "../services/email.js";
 import { formatAddress } from "../services/account-security.js";
-import { registerSchema, publicUser } from "./auth.js";
-import { cookieOptions, createSession } from "../auth.js";
+import { registerSchema } from "../schemas/auth.js";
+import { publicUser } from "../services/public-user.js";
+import { cookieOptions, createSession } from "../services/sessions.js";
 
 const emailInput = z.strictObject({
   email: z

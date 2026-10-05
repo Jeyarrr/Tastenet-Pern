@@ -1,12 +1,12 @@
 import { randomUUID } from "node:crypto";
 import { Router } from "express";
 import { z } from "zod";
-import { authenticate, authorize } from "../auth.js";
-import { HttpError } from "../errors.js";
-import { validate } from "../validate.js";
+import { authenticate, authorize } from "../middleware/auth.js";
+import { HttpError } from "../lib/HttpError.js";
+import { validate } from "../middleware/validate.js";
 import { transaction } from "../services/transaction.js";
 import { deductRecipeStock } from "../services/stock.js";
-import { ownedFile } from "./files.js";
+import { ownedFile } from "../services/media.js";
 import { orderFeaturesRouter } from "./order-features.js";
 
 const orderInput = z.strictObject({

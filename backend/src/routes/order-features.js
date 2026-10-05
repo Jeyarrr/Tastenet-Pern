@@ -1,10 +1,10 @@
 import { Router } from "express";
 import { z } from "zod";
-import { authorize } from "../auth.js";
-import { HttpError } from "../errors.js";
-import { validate } from "../validate.js";
+import { authorize } from "../middleware/auth.js";
+import { HttpError } from "../lib/HttpError.js";
+import { validate } from "../middleware/validate.js";
 import { transaction, audit } from "../services/transaction.js";
-import { ownedFile } from "./files.js";
+import { ownedFile } from "../services/media.js";
 
 export function orderFeaturesRouter(db) {
   const router = Router();

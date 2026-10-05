@@ -1,4 +1,4 @@
-import { ErrorBoundary } from "./features/ErrorBoundary.jsx";
+import { ErrorBoundary } from "./components/ui/ErrorBoundary.jsx";
 import {
   BrowserRouter,
   Navigate,
@@ -6,13 +6,18 @@ import {
   Routes,
   Outlet,
 } from "react-router-dom";
-import { AuthProvider, homeFor, useAuth } from "./auth.jsx";
-import { LoginPage, RegisterPage } from "./pages/AuthPages.jsx";
+import {
+  AuthProvider,
+  homeFor,
+  useAuth,
+} from "./features/auth/AuthProvider.jsx";
+import { LoginPage } from "./features/auth/LoginPage.jsx";
+import { RegisterPage } from "./features/auth/RegisterPage.jsx";
 import { CustomerPage } from "./pages/CustomerPage.jsx";
 import { AdminPage } from "./pages/AdminPage.jsx";
 import { RiderPage } from "./pages/RiderPage.jsx";
 import { SuperAdminPage } from "./pages/SuperAdminPage.jsx";
-import { ForgotPasswordPage } from "./features/AccountRecovery.jsx";
+import { ForgotPasswordPage } from "./features/auth/ForgotPassword.jsx";
 
 function Protected({ role, children }) {
   const { user, loading } = useAuth();

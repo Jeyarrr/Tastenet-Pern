@@ -1,27 +1,29 @@
-import { AccountProfile } from "../features/AccountProfile.jsx";
-import { FindUs } from "../features/FindUs.jsx";
-import { passwordPattern, passwordHelp } from "../features/AccountFields.jsx";
-import { PasswordInput } from "../features/PasswordInput.jsx";
+import { CustomerOrdersDialog } from "../features/orders/CustomerOrdersDialog.jsx";
+import { CheckoutDialog } from "../features/cart/CheckoutDialog.jsx";
+import { CartDialog } from "../features/cart/CartDialog.jsx";
+import { StorefrontNavigation } from "../features/storefront/StorefrontNavigation.jsx";
+import { StorefrontMenu } from "../features/storefront/StorefrontMenu.jsx";
+import { StorefrontHero } from "../features/storefront/StorefrontHero.jsx";
+import { AccountProfile } from "../features/accounts/AccountProfile.jsx";
+import { FindUs } from "../features/storefront/FindUs.jsx";
+import { passwordPattern, passwordHelp } from "../lib/passwordPolicy.js";
+import { PasswordInput } from "../components/forms/PasswordInput.jsx";
 import { useEffect, useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { api, dateTime, money } from "../api.js";
-import { useAuth } from "../auth.jsx";
-import {
-  Badge,
-  Empty,
-  Icon,
-  imagePath,
-  Modal,
-  Notice,
-} from "../components.jsx";
-import { useCart } from "../features/useCart.js";
-import { OrderDetails } from "../features/OrderDetails.jsx";
-import { MealDetails } from "../features/MealDetails.jsx";
-import { FileUpload } from "../features/FileUpload.jsx";
+import { api } from "../lib/api.js";
+
+import { useAuth } from "../features/auth/AuthProvider.jsx";
+import { Notice } from "../components/ui/Feedback.jsx";
+import { Icon } from "../components/ui/Icon.jsx";
+
+import { Modal } from "../components/ui/Modal.jsx";
+import { useCart } from "../features/cart/useCart.js";
+import { OrderDetails } from "../features/orders/OrderDetails.jsx";
+import { MealDetails } from "../features/catalog/MealDetails.jsx";
+
 import sections from "../original/website-sections.json";
-import "../original/customer.css";
-import "../features/customer-storefront.css";
-import { useStorefrontMotion } from "../features/useStorefrontMotion.js";
+
+import { useStorefrontMotion } from "../features/storefront/useStorefrontMotion.js";
 
 function StaticSection({ name, onClick }) {
   return (
@@ -34,7 +36,7 @@ function StaticSection({ name, onClick }) {
 
 export function CustomerPage() {
   const storefrontRef = useStorefrontMotion();
-  const { user, logout, refreshUser } = useAuth();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [menu, setMenu] = useState([]),
     [fees, setFees] = useState([]),
@@ -264,71 +266,17 @@ export function CustomerPage() {
   };
   return (
     <div ref={storefrontRef} className="original-customer customer-storefront">
-      <nav
-        className={`navbar ${scrolled ? "scrolled" : ""}`}
-        aria-label="Customer navigation"
-      >
-        <a href="#home" className="logo-container">
-          <img
-            src="/original-assets/LOGO.png"
-            alt="Caballeros Logo"
-            className="logo-img"
-          />
-          <span className="brand-name">Caballeros</span>
-        </a>
-        <ul className="nav-links">
-          {navLinks.map(([id, label]) => (
-            <li key={id}>
-              <a href={`#${id}`} className="nav-link">
-                {label}
-              </a>
-            </li>
-          ))}
-        </ul>
-        <div className="nav-icons">
-          <button
-            type="button"
-            className="cart-icon-wrapper"
-            aria-label={`Shopping cart, ${count} items`}
-            onClick={() => open("cart")}
-          >
-            <Icon name="basket-shopping" />
-            <span className="storefront-cart-count" aria-hidden="true">
-              {count > 99 ? "99+" : count}
-            </span>
-          </button>
-          {user ? (
-            <button
-              type="button"
-              aria-label="My account"
-              onClick={() => setProfileOpen(!profileOpen)}
-            >
-              <Icon name="circle-user" />
-            </button>
-          ) : (
-            <Link to="/login" aria-label="Sign in">
-              <Icon name="circle-user" />
-            </Link>
-          )}
-          <button
-            className={`hamburger-btn ${mobileOpen ? "open" : ""}`}
-            aria-label="Toggle navigation"
-            aria-expanded={mobileOpen}
-            onClick={() => setMobileOpen(!mobileOpen)}
-          >
-            <span className="hbar" />
-            <span className="hbar" />
-            <span className="hbar" />
-          </button>
-        </div>
-        <div className={`mobile-nav-drawer ${mobileOpen ? "open" : ""}`}>
-          {navLinks.map(([id, label]) => (
-            <a href={`#${id}`} key={id} onClick={() => setMobileOpen(false)}>
-              {label}
-            </a>
-          ))}
-        </div>
-      </nav>
+      <StorefrontNavigation
+        user={user}
+        profileOpen={profileOpen}
+        setProfileOpen={setProfileOpen}
+        mobileOpen={mobileOpen}
+        setMobileOpen={setMobileOpen}
+        scrolled={scrolled}
+        open={open}
+        count={count}
+        navLinks={navLinks}
+      />
       {profileOpen && (
         <>
           <button
@@ -371,174 +319,27 @@ export function CustomerPage() {
           </div>
         </>
       )}
-      <div id="home" className="hero-container section-fade-in visible">
-        <div className="hero-content">
-          <span className="storefront-eyebrow">CABALLEROS · DASMARIÑAS</span>
-          <h1>
-            Sizzling Good Food,
-            <br />
-            Delivered Hot!
-          </h1>
-          <div className="hero-tagline">
-            Dasmariñas' Favorite Silog &amp; Sizzling Meals
-          </div>
-          <div className="hero-subtitle">
-            Lutong-Bahay Delivered to your Doorstep
-          </div>
-          <div className="hero-description">
-            Your silog favorites, sizzling plates, and comforting Filipino
-            flavors. Find your craving and make it a Caballeros meal.
-          </div>
-          <form
-            className="search-box"
-            onSubmit={(e) => {
-              e.preventDefault();
-              setQuery(search);
-              setSelectedCategory("All");
-              document
-                .getElementById("menu")
-                ?.scrollIntoView({ behavior: "smooth" });
-            }}
-          >
-            <Icon name="magnifying-glass" />
-            <input
-              className="search-input"
-              aria-label="Search food"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search for Tapsilog, Sisig, or your Favorite..."
-            />
-            <button className="btn-search">Search</button>
-          </form>
-          <div className="cta-group">
-            <a className="btn-order" href="#menu">
-              Explore the Menu <Icon name="arrow-right" />
-            </a>
-          </div>
-          <div className="storefront-benefits">
-            <span>
-              <Icon name="utensils" /> Filipino comfort food
-            </span>
-            <span>
-              <Icon name="motorcycle" /> Delivered in Dasmariñas
-            </span>
-            <span>
-              <Icon name="gift" /> Free delivery from ₱500
-            </span>
-          </div>
-        </div>
-      </div>
-      <section
-        id="menu"
-        className="menu-display-section section-fade-in visible"
-      >
-        <div className="storefront-menu-heading">
-          <div>
-            <span className="storefront-eyebrow">WHAT ARE YOU CRAVING?</span>
-            <h2 className="menu-header">DISCOVER OUR MENU</h2>
-            <p>A little comfort. A lot of flavor. Choose your next favorite.</p>
-          </div>
-          <span className="menu-delivery-note">
-            <Icon name="motorcycle" /> Free delivery on orders ₱500 and up
-          </span>
-        </div>
-        <nav className="menu-category-tabs" aria-label="Menu categories">
-          {["All", ...categories].map((category) => (
-            <button
-              key={category}
-              className={selectedCategory === category ? "active" : ""}
-              aria-pressed={selectedCategory === category}
-              onClick={() => setSelectedCategory(category)}
-            >
-              {category}
-            </button>
-          ))}
-        </nav>
-        {query && (
-          <div className="menu-search-summary">
-            Results for “{query}”
-            <button
-              onClick={() => {
-                setQuery("");
-                setSearch("");
-              }}
-            >
-              Clear search <Icon name="xmark" />
-            </button>
-          </div>
-        )}
-        <Notice error={dialog ? "" : error} />
-        {loading ? (
-          <p className="migration-loading">Loading menu…</p>
-        ) : !filtered.some(
-            (item) =>
-              selectedCategory === "All" || item.food_type === selectedCategory,
-          ) ? (
-          <Empty title="No menu items found" />
-        ) : (
-          categories
-            .filter(
-              (category) =>
-                selectedCategory === "All" || selectedCategory === category,
-            )
-            .map((category) => {
-              const items = filtered.filter(
-                (item) => item.food_type === category,
-              );
-              if (!items.length) return null;
-              return (
-                <div className="menu-category-container" key={category}>
-                  <h3 className="category-title">{category}</h3>
-                  <div className="menu-grid-container">
-                    {items.map((item) => (
-                      <article className="menu-container" key={item.id}>
-                        <img
-                          className="menu-featured-img"
-                          src={imagePath(item.image_path)}
-                          alt={item.food_name}
-                          loading="lazy"
-                        />
-                        <div className="menu-list-container">
-                          <span className="meal-category-tag">
-                            {item.food_type}
-                          </span>
-                          <h4 className="category-label">{item.food_name}</h4>
-                          {item.description && (
-                            <div className="meal-description-short">
-                              {item.description}
-                            </div>
-                          )}
-                          <div className="item-price-small">
-                            {money(item.price)}
-                          </div>
-                          <div className="menu-item-buttons">
-                            <button
-                              className="view-btn"
-                              onClick={() => open(item)}
-                            >
-                              <Icon name="eye" /> View
-                            </button>
-                            <button
-                              className="add-to-cart-btn-text"
-                              onClick={() => {
-                                if (!updateCart(item, 1)) return;
-                                setSuccess(
-                                  `${item.food_name} added to your order.`,
-                                );
-                              }}
-                            >
-                              <Icon name="plus" /> Add
-                            </button>
-                          </div>
-                        </div>
-                      </article>
-                    ))}
-                  </div>
-                </div>
-              );
-            })
-        )}
-      </section>
+      <StorefrontHero
+        search={search}
+        setSearch={setSearch}
+        setQuery={setQuery}
+        setSelectedCategory={setSelectedCategory}
+      />
+      <StorefrontMenu
+        setSearch={setSearch}
+        query={query}
+        setQuery={setQuery}
+        selectedCategory={selectedCategory}
+        setSelectedCategory={setSelectedCategory}
+        dialog={dialog}
+        error={error}
+        setSuccess={setSuccess}
+        loading={loading}
+        open={open}
+        updateCart={updateCart}
+        categories={categories}
+        filtered={filtered}
+      />
       <StaticSection name="about" />
       <StaticSection name="love" />
       <StaticSection name="steps" />
@@ -608,274 +409,42 @@ export function CustomerPage() {
         </Modal>
       )}
       {dialog === "cart" && (
-        <Modal
-          title="Your order"
-          variant="cart-drawer"
-          onClose={close}
-          bodyClass="original-customer cart-surface"
-        >
-          <div className="cart-modal-body">
-            {!lines.length ? (
-              <div className="cart-empty-state">
-                <Icon name="basket-shopping" />
-                <p>Your cart is empty</p>
-                <a href="#menu" className="btn-browse-menu" onClick={close}>
-                  Browse Menu
-                </a>
-              </div>
-            ) : (
-              lines.map((item) => (
-                <div className="cart-item" key={item.id}>
-                  <div className="cart-item-header">
-                    <div className="cart-item-name">{item.food_name}</div>
-                    <div className="cart-item-price">
-                      {money(Number(item.price) * item.quantity)}
-                    </div>
-                  </div>
-                  <label className="cart-instructions">
-                    Special request
-                    <input
-                      maxLength={500}
-                      value={item.specialInstructions || ""}
-                      onChange={(e) =>
-                        setCart((old) => ({
-                          ...old,
-                          [item.id]: {
-                            ...old[item.id],
-                            specialInstructions: e.target.value,
-                          },
-                        }))
-                      }
-                    />
-                  </label>
-                  <div className="cart-item-controls">
-                    <div className="quantity-controls">
-                      <button
-                        className="quantity-btn"
-                        aria-label={`Remove one ${item.food_name}`}
-                        onClick={() => updateCart(item, -1)}
-                      >
-                        −
-                      </button>
-                      <span className="quantity-value">{item.quantity}</span>
-                      <button
-                        className="quantity-btn"
-                        aria-label={`Add one ${item.food_name}`}
-                        onClick={() => updateCart(item, 1)}
-                      >
-                        +
-                      </button>
-                    </div>
-                    <button
-                      className="remove-item-btn"
-                      onClick={() => updateCart(item, -item.quantity)}
-                    >
-                      <Icon name="trash" /> Remove
-                    </button>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-          <div className="cart-modal-footer">
-            <div className="cart-summary">
-              <div className="cart-summary-row">
-                <span>Subtotal</span>
-                <span>{money(subtotal)}</span>
-              </div>
-              <div className="cart-summary-row">
-                <span>Delivery Fee</span>
-                <span>{money(delivery)}</span>
-              </div>
-              <div className="cart-summary-row cart-total">
-                <span>Total</span>
-                <span>{money(subtotal + delivery)}</span>
-              </div>
-            </div>
-            <div className="cart-actions">
-              <button
-                className="btn-clear-cart"
-                disabled={!count}
-                onClick={() => setCart({})}
-              >
-                Clear Cart
-              </button>
-              <button
-                className="btn-checkout"
-                disabled={!count}
-                onClick={checkoutOpen}
-              >
-                Checkout
-              </button>
-            </div>
-            <div className="cart-delivery-info">
-              <Icon name="circle-info" />
-              <span>
-                Delivery fee is based on your barangay. Free delivery on orders
-                over ₱500.
-              </span>
-            </div>
-          </div>
-        </Modal>
+        <CartDialog
+          setCart={setCart}
+          close={close}
+          updateCart={updateCart}
+          lines={lines}
+          count={count}
+          subtotal={subtotal}
+          delivery={delivery}
+          checkoutOpen={checkoutOpen}
+        />
       )}
       {dialog === "checkout" && (
-        <Modal title="Checkout" onClose={close}>
-          <form className="migration-form" onSubmit={placeOrder}>
-            <Notice error={error} />
-            <div className="checkout-section">
-              <h4>
-                <Icon name="location-dot" /> Delivery Address
-              </h4>
-              <label>
-                House, street and address
-                <textarea
-                  required
-                  minLength={5}
-                  maxLength={1000}
-                  value={checkout.deliveryAddress}
-                  onChange={(e) =>
-                    setCheckout({
-                      ...checkout,
-                      deliveryAddress: e.target.value,
-                    })
-                  }
-                />
-              </label>
-              <label>
-                Barangay
-                <select
-                  value={checkout.barangayName}
-                  onChange={(e) =>
-                    setCheckout({ ...checkout, barangayName: e.target.value })
-                  }
-                  required
-                >
-                  {fees.map((fee) => (
-                    <option key={fee.id}>{fee.barangay_name}</option>
-                  ))}
-                </select>
-              </label>
-              <p className="muted">Service area: Dasmariñas City only</p>
-            </div>
-            <div className="checkout-section">
-              <h4>
-                <Icon name="credit-card" /> Payment Method
-              </h4>
-              <div className="payment-options">
-                {methods.map((method) => (
-                  <label className="payment-option" key={method.id}>
-                    <input
-                      type="radio"
-                      name="paymentMethod"
-                      value={method.method_name}
-                      checked={checkout.paymentMethod === method.method_name}
-                      onChange={(e) =>
-                        setCheckout({
-                          ...checkout,
-                          paymentMethod: e.target.value,
-                        })
-                      }
-                      required
-                    />
-                    <div className="payment-option-content">
-                      <Icon name="wallet" />
-                      <span>{method.method_name}</span>
-                      {method.qr_photo && (
-                        <img
-                          className="payment-qr"
-                          src={imagePath(method.qr_photo)}
-                          alt={`${method.method_name} payment QR`}
-                        />
-                      )}
-                      {method.account_details && (
-                        <small>{method.account_details}</small>
-                      )}
-                      {method.instructions && (
-                        <small>{method.instructions}</small>
-                      )}
-                    </div>
-                  </label>
-                ))}
-              </div>
-            </div>
-            <label>
-              Special Instructions (Optional)
-              <textarea
-                value={checkout.instructions}
-                maxLength={500}
-                onChange={(e) =>
-                  setCheckout({ ...checkout, instructions: e.target.value })
-                }
-                placeholder="No chili, extra napkins, ring the bell..."
-              />
-            </label>
-            <div className="cart-summary-row cart-total">
-              <span>Total</span>
-              <strong>{money(subtotal + delivery)}</strong>
-            </div>
-            <button
-              className="migration-button primary"
-              disabled={
-                busy || !lines.length || !methods.length || !fees.length
-              }
-            >
-              {busy ? "Placing order…" : "Confirm Order"}
-            </button>
-          </form>
-        </Modal>
+        <CheckoutDialog
+          fees={fees}
+          methods={methods}
+          checkout={checkout}
+          setCheckout={setCheckout}
+          error={error}
+          busy={busy}
+          close={close}
+          lines={lines}
+          subtotal={subtotal}
+          delivery={delivery}
+          placeOrder={placeOrder}
+        />
       )}
       {dialog === "orders" && (
-        <Modal title="My Orders" onClose={close} wide>
-          <Notice error={error} success={success} />
-          {["Active Orders", "Order History"].map((heading, index) => (
-            <div key={heading}>
-              <h3 className="migration-subheading">{heading}</h3>
-              {orders
-                .filter((o) =>
-                  index === 0
-                    ? !["Completed", "Cancelled"].includes(o.status)
-                    : ["Completed", "Cancelled"].includes(o.status),
-                )
-                .map((order) => (
-                  <div className="order-card" key={order.id}>
-                    <div className="migration-order-row">
-                      <div>
-                        <strong>Order #: {order.ticket_number}</strong>
-                        <br />
-                        <small>{dateTime(order.created_at)}</small>
-                        <p>Delivery to: {order.delivery_address}</p>
-                        <strong>Total: {money(order.total_amount)}</strong>
-                      </div>
-                      <div>
-                        <Badge value={order.status} />
-                        <button
-                          className="migration-button"
-                          onClick={() => open({ kind: "order", order })}
-                        >
-                          <Icon name="eye" /> Details, Proofs &amp; Rating
-                        </button>
-                        {order.status === "Open" && (
-                          <button
-                            className="btn-cancel"
-                            disabled={busy}
-                            onClick={() => cancel(order.id)}
-                          >
-                            Cancel
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-            </div>
-          ))}
-          {!orders.length && (
-            <Empty
-              title="No orders yet"
-              detail="Browse the menu to place your first order."
-            />
-          )}
-        </Modal>
+        <CustomerOrdersDialog
+          orders={orders}
+          error={error}
+          success={success}
+          busy={busy}
+          close={close}
+          open={open}
+          cancel={cancel}
+        />
       )}
       {dialog === "profile" && profile && (
         <Modal title="My Profile" onClose={close} wide>

@@ -22,7 +22,7 @@ Open `http://localhost:5173`. The Vite development server proxies `/api` to the 
 
 Vite may use port 5174 if 5173 is already occupied by another local instance. Local development accepts browser requests from ports 5173 and 5174; production accepts only the configured `CLIENT_ORIGIN`.
 
-If dependencies have not been installed on a fresh checkout, first run `npm --prefix backend ci` and `npm --prefix frontend ci`. Keep both server terminals open while using the app; press Ctrl+C in each terminal to stop it.
+If dependencies have not been installed on a fresh checkout, first run `npm ci`, `npm --prefix backend ci`, and `npm --prefix frontend ci`. Keep both server terminals open while using the app; press Ctrl+C in each terminal to stop it.
 
 The UI now ports the burgundy and gold design from [Jeyarrr/TasteNet](https://github.com/Jeyarrr/TasteNet), commit `a7ba463`, including original CSS, logos, food images, website sections, and the role sidebars. Open `/` for the public website or `/login` to sign in. Customer, Admin, Rider, and SuperAdmin accounts automatically open their own interface. See [design port notes](frontend/DESIGN_PORT.md).
 
@@ -32,8 +32,18 @@ The restored workflows include email verification and password-reset OTP, Google
 
 Google and email workflows are implemented and tested with simulated providers. Add your own Google OAuth and SMTP settings to private `backend/.env` before using live sign-in or email. Set `EMAIL_VERIFICATION_REQUIRED=true` after SMTP is ready; existing password accounts continue to work. Original source pages with empty/mock implementations are identified in the parity audit; no purchasing module is claimed.
 
-For an existing database, run `npm run db:migrate` after pulling an update. The versioned upgrades retain existing records. The current local database has both migrations applied and all 10 referenced legacy profile/document files migrated into protected database storage.
+For an existing database, run `npm run db:migrate` after pulling an update. The versioned upgrades retain existing records. The current local database has the versioned migrations applied and all 10 referenced legacy profile/document files migrated into protected database storage.
 
 Run `npm run build`, `npm test`, and `npm run test:ui` to check the build, backend flows, and desktop/mobile layouts. Browser tests use synthetic data and an isolated browser profile. For checks against the running API and actual local database, use `npm --prefix backend run test:live` and `npm --prefix frontend run test:ui:live`. Live checks are read-only except for temporary authentication sessions, which are removed afterward.
 
 For a fresh empty database, configure `backend/.env` from `backend/.env.example`, then run `npm run db:setup`. This creates the `tastenet` database and inserts only safe synthetic starter records. To import a BACPAC snapshot on the same machine, see the migration notes and `npm run db:import-bacpac`.
+
+## Code organization and maintenance
+
+`frontend/src/pages` composes the role screens. Feature folders under `frontend/src/features` group authentication, accounts, storefront, cart, orders, delivery, operations, management, inventory, and reports. Shared UI and form controls live in `components`; API, media, formatting, and download helpers live in `lib`. `styles/index.css` loads styles in an explicit order to preserve the original design.
+
+`backend/src/routes` defines API endpoints, `middleware` handles sessions, role checks, validation, and errors, `schemas` defines request validation, and `services` owns reusable application operations. Database SQL and versioned migrations live in `database`.
+
+Run `npm run format` to format maintained source files and `npm run check` to verify lint, formatting, and environment ignore rules. Original design snapshots, public assets, and SQL migrations are excluded from automated formatting. Run `npm test`, `npm run build`, and `npm run test:ui` before publishing a refactor.
+
+Real environment files, variants, and backups are ignored by Git. Only the three `.env.example` templates are tracked. `npm run check:env` checks both the tracked files and ignore rules without reading private configuration values.

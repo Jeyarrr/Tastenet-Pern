@@ -1,0 +1,15 @@
+node_modules/
+dist/
+coverage/
+test-results/
+playwright-report/
+.reference/
+.env*
+*.env
+*.env.*
+**/package-lock.json
+# Preserve imported design snapshots, vendored assets and migration checksums.
+frontend/src/original/
+frontend/public/
+database/
+PARITY.md

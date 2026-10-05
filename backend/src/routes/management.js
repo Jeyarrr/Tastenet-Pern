@@ -1,14 +1,12 @@
 import { Router } from "express";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
-import { authenticate, authorize } from "../auth.js";
-import { HttpError } from "../errors.js";
-import {
-  confirmPassword,
-  passwordSchema,
-} from "../services/account-security.js";
+import { authenticate, authorize } from "../middleware/auth.js";
+import { HttpError } from "../lib/HttpError.js";
+import { confirmPassword } from "../services/account-security.js";
+import { passwordSchema } from "../schemas/account.js";
 import { transaction, audit } from "../services/transaction.js";
-import { validate } from "../validate.js";
+import { validate } from "../middleware/validate.js";
 
 const staffInput = z.strictObject({
   username: z

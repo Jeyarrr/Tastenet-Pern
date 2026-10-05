@@ -1,12 +1,12 @@
 import { Router } from "express";
 import { z } from "zod";
-import { authenticate, authorize } from "../auth.js";
-import { HttpError } from "../errors.js";
-import { validate } from "../validate.js";
+import { authenticate, authorize } from "../middleware/auth.js";
+import { HttpError } from "../lib/HttpError.js";
+import { validate } from "../middleware/validate.js";
 import { transaction, audit } from "../services/transaction.js";
 import { confirmPassword } from "../services/account-security.js";
-import { documentColumns } from "./profile-features.js";
-import { ownedFile } from "./files.js";
+import { documentColumns } from "../schemas/rider.js";
+import { ownedFile } from "../services/media.js";
 
 export const paymentSchema = z.strictObject({
   name: z.string().trim().min(1).max(120),

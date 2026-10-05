@@ -5,7 +5,7 @@ import { readFile } from "node:fs/promises";
 import { randomUUID } from "node:crypto";
 import { PGlite } from "@electric-sql/pglite";
 import { createApp } from "../src/app.js";
-import { createSession } from "../src/auth.js";
+import { createSession } from "../src/services/sessions.js";
 import { migrate } from "../src/migrations.js";
 
 const config = {

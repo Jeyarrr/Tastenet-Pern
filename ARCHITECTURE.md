@@ -2,7 +2,7 @@
 
 ## Application boundaries
 
-- React pages compose shared features for recipes, uploads, order details, rider documents, account recovery and management dialogs. `components.jsx` owns the shared shell, notices and accessible dialog stack. `api.js` sends cookie credentials and normalizes API errors. A root error boundary provides a recoverable screen for rendering failures.
+- React role pages compose domain features under `frontend/src/features`. Shared shells, notices, forms, and the accessible dialog stack live in `frontend/src/components`. `frontend/src/lib/api.js` sends cookie credentials and normalizes API errors. A root error boundary provides a recoverable screen for rendering failures. `frontend/src/styles/index.css` defines the stylesheet order centrally.
 - Express routes validate inputs with Zod, authenticate database-backed sessions, and enforce role and record ownership. `services/transaction.js` handles commit/rollback; `services/stock.js` locks ingredient rows in a stable order before deducting a recipe.
 - PostgreSQL is authoritative for prices, order totals, stock, user roles, sessions and file permissions. The signed-in browser cart is a draft. Public menu Add actions require sign-in or registration. Checkout accepts an idempotency key to prevent a repeated request from creating another ticket.
 - Files are stored as `bytea` with an owner, purpose and optional ticket ID. Uploaded files are limited to 3 MB. JPG/PNG/WebP signature checks apply; PDF is accepted only for rider documents. Menu and payment QR images are public. Profile photos, rider documents and proofs require the corresponding account/role/order access. No uploaded files rely on server-local disk.

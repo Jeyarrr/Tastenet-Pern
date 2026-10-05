@@ -1,61 +1,26 @@
+import { publicUser } from "../services/public-user.js";
+import { registerSchema, loginSchema } from "../schemas/auth.js";
 import { Router } from "express";
 import { createHash } from "node:crypto";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
+import { authenticate } from "../middleware/auth.js";
 import {
-  authenticate,
   cookieOptions,
   createSession,
   deleteSession,
-} from "../auth.js";
-import { HttpError } from "../errors.js";
-import { validate } from "../validate.js";
+} from "../services/sessions.js";
+import { HttpError } from "../lib/HttpError.js";
+import { validate } from "../middleware/validate.js";
+import { addressSchema, passwordSchema } from "../schemas/account.js";
 import {
-  addressSchema,
   formatAddress,
-  passwordSchema,
   confirmPassword,
 } from "../services/account-security.js";
-import { ownedFile } from "./files.js";
-import { vehicleSchema, documentColumns } from "./profile-features.js";
+import { ownedFile } from "../services/media.js";
+import { vehicleSchema, documentColumns } from "../schemas/rider.js";
 import { transaction } from "../services/transaction.js";
 import { rateLimit } from "../services/rate-limit.js";
-
-export const registerSchema = z.strictObject({
-  username: z
-    .string()
-    .trim()
-    .min(3)
-    .max(80)
-    .regex(/^[\p{L}\p{N}_.-]+$/u),
-  email: z
-    .email()
-    .max(320)
-    .transform((value) => value.toLowerCase()),
-  password: passwordSchema,
-  fullName: z.string().trim().min(1).max(200),
-  phone: z
-    .string()
-    .regex(/^\+639[0-9]{9}$/, "Use a Philippine mobile number")
-    .optional(),
-  addressDetails: addressSchema.optional(),
-  address: z.string().trim().max(1000).optional(),
-});
-const loginSchema = z.strictObject({
-  identifier: z.string().trim().min(1).max(320),
-  password: z.string().min(1),
-  rememberMe: z.boolean().optional(),
-});
-
-export function publicUser(user) {
-  return {
-    id: user.id,
-    username: user.username,
-    email: user.email,
-    fullName: user.full_name,
-    role: user.role,
-  };
-}
 
 export function authRouter(db, config) {
   const router = Router();

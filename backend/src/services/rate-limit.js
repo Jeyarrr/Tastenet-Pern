@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { HttpError } from "../errors.js";
+import { HttpError } from "../lib/HttpError.js";
 export function rateLimit(db, namespace, limit = 10, seconds = 600) {
   return async (req, res, next) => {
     const identity = `${namespace}:${req.ip}:${String(req.user?.id || req.body?.identifier || req.body?.email || "").toLowerCase()}`;

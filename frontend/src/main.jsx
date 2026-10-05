@@ -1,9 +1,7 @@
+import "./styles/index.css";
 import React from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App.jsx";
-import "./styles.css";
-import "./interactions.css";
-import "./features/workflows.css";
 
 // Reuse the root if Vite reloads the entry module during development.
 const root =

@@ -1,10 +1,10 @@
 import { randomUUID } from "node:crypto";
-import { ownedFile } from "./files.js";
+import { ownedFile } from "../services/media.js";
 import { Router } from "express";
 import { z } from "zod";
-import { authenticate, authorize } from "../auth.js";
-import { HttpError } from "../errors.js";
-import { validate } from "../validate.js";
+import { authenticate, authorize } from "../middleware/auth.js";
+import { HttpError } from "../lib/HttpError.js";
+import { validate } from "../middleware/validate.js";
 import { transaction, audit } from "../services/transaction.js";
 
 const menuInput = z.strictObject({

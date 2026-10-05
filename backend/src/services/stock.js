@@ -1,4 +1,4 @@
-import { HttpError } from "../errors.js";
+import { HttpError } from "../lib/HttpError.js";
 
 // Called with the order already locked. All ingredient locks use the same order.
 export async function deductRecipeStock(client, order, user) {
