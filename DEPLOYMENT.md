@@ -20,6 +20,10 @@ DATABASE_URL=postgresql://postgres.PROJECT_REF:ENCODED_PASSWORD@YOUR_POOLER_HOST
 
 Copy the actual connection details from Supabase's **Connect** dialog. URL-encode special password characters. Application connections use certificate-verified TLS. The serverless backend shares a pool per instance, limits it to five clients, and attaches Vercel's pool lifecycle helper.
 
+The public Supabase CA downloaded from Database Settings is bundled at `backend/src/certificates/supabase-ca.crt`. The backend and transfer tools load it with certificate and hostname verification enabled. This public certificate contains no credentials. Its current expiry is April 26, 2031; replace it with the dashboard's certificate if Supabase rotates its CA. URL SSL options are removed before passing the explicit TLS configuration to `pg`, so they cannot override the trusted CA.
+
+For data transfers on a network with IPv6 access, add `--direct` to the transfer command. This uses the same project's direct database endpoint for the migration, avoiding pooler interruptions during binary media uploads. The saved deployment URL continues to use the transaction pooler.
+
 ## Transfer the existing local records
 
 The source stays in `backend/.env`. The target stays in `backend/.env.production.local`. The transfer accepts only a local source and a Supabase destination. Do not use `db:setup` for Supabase: that command creates a local database named `tastenet`.

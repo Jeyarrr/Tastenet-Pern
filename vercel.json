@@ -5,10 +5,10 @@
     "frontend": {
       "root": "frontend",
       "framework": "vite",
-      "installCommand": "npm ci",
+      "installCommand": "npm ci --include=dev",
       "buildCommand": "npm run build",
       "outputDirectory": "dist",
-      "rewrites": [{ "source": "/:path*", "destination": "/index.html" }]
+      "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
     },
     "backend": {
       "root": "backend",
@@ -21,6 +21,6 @@
   "rewrites": [
     { "source": "/api/:path*", "destination": { "service": "backend" } },
     { "source": "/health/:path*", "destination": { "service": "backend" } },
-    { "source": "/:path*", "destination": { "service": "frontend" } }
+    { "source": "/(.*)", "destination": { "service": "frontend" } }
   ]
 }

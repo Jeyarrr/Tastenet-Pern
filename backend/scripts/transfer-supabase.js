@@ -1,6 +1,7 @@
 import { readFile } from "node:fs/promises";
 import dotenv from "dotenv";
 import pg from "pg";
+import { connectionOptions } from "../src/db.js";
 import { readConfig } from "../src/config.js";
 import { migrate } from "../src/migrations.js";
 import {
@@ -35,8 +36,25 @@ try {
       "Destination must be the Supabase project PostgreSQL connection URL",
     );
   destinationUrl.searchParams.set("sslmode", "verify-full");
-  source = new pg.Client({ connectionString: sourceUrl.toString() });
-  target = new pg.Client({ connectionString: destinationUrl.toString() });
+  if (process.argv.includes("--direct")) {
+    const match = decodeURIComponent(destinationUrl.username).match(
+      /^postgres\.([a-z0-9]+)$/,
+    );
+    if (!match || !destinationUrl.hostname.endsWith(".pooler.supabase.com"))
+      throw new Error("Direct migration requires a Supabase owner pooler URL");
+    destinationUrl.hostname = `db.${match[1]}.supabase.co`;
+    destinationUrl.username = "postgres";
+    destinationUrl.port = "5432";
+  }
+  source = new pg.Client(connectionOptions(sourceUrl.toString()));
+  target = new pg.Client({
+    ...connectionOptions(destinationUrl.toString()),
+    query_timeout: 60000,
+  });
+  // pg also emits a client error when a connection drops between queries.
+  // Pending/subsequent queries reject and are handled by the outer catch.
+  source.on("error", () => {});
+  target.on("error", () => {});
   await source.connect();
   await target.connect();
   await assertEmptyDestination(target);

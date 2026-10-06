@@ -2,6 +2,7 @@ import { readFile, writeFile } from "node:fs/promises";
 import { randomBytes } from "node:crypto";
 import dotenv from "dotenv";
 import pg from "pg";
+import { connectionOptions } from "../src/db.js";
 import {
   applicationConnectionUrl,
   provisionApplicationRole,
@@ -18,7 +19,7 @@ try {
   if (!/(?:\.pooler\.supabase\.com|\.supabase\.co)$/.test(ownerUrl.hostname))
     throw new Error("Owner connection must target the Supabase project");
   ownerUrl.searchParams.set("sslmode", "verify-full");
-  owner = new pg.Client({ connectionString: ownerUrl.toString() });
+  owner = new pg.Client(connectionOptions(ownerUrl.toString()));
   await owner.connect();
   const savedUrl = env.APP_DATABASE_URL ? new URL(env.APP_DATABASE_URL) : null;
   const password = savedUrl
@@ -51,7 +52,7 @@ try {
     await owner.query("COMMIT");
     transaction = false;
   }
-  app = new pg.Client({ connectionString: url });
+  app = new pg.Client(connectionOptions(url));
   await app.connect();
   if (
     (await app.query("SELECT current_user AS role")).rows[0].role !==
