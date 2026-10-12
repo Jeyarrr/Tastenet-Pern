@@ -4,6 +4,32 @@
 
 The project now contains a PostgreSQL database, an Express API, and React interfaces for **Customer, Admin, Rider, and SuperAdmin**. The local database is named `tastenet`; its tables live in the `tastenet` schema. The supplied `DeliverySystem.bacpac` was imported into a separate MSSQL snapshot and its data migrated to PostgreSQL. See [database migration notes](database/README.md).
 
+## Live site and reviewer accounts
+
+Visit [TasteNet for Caballeros](https://tastenet-caballeros.vercel.app) or open the [sign-in page](https://tastenet-caballeros.vercel.app/login). Use a username and password below; the system opens the matching role's portal automatically. No local installation is needed.
+
+These dedicated sample accounts are available for thesis evaluators and developers reviewing the project. They use the **live database**, with each role's normal permissions. Admin and SuperAdmin actions can change live records; this is not an isolated sandbox. Existing users' credentials are not published.
+
+| Role       | Username            | Password              |
+| ---------- | ------------------- | --------------------- |
+| Customer   | `review_customer`   | `ReviewCustomer!2026` |
+| Admin      | `review_admin`      | `ReviewAdmin!2026`    |
+| Rider      | `review_rider`      | `ReviewRider!2026`    |
+| SuperAdmin | `review_superadmin` | `ReviewOwner!2026`    |
+
+Please keep these shared accounts' passwords and contact details unchanged. Use clearly labeled review entries, avoid modifying existing store/customer records, and do not enter personal information or submit real payments. Sign out before switching roles. Reviewer orders are visible to live staff, so coordinate order tests with the project owner.
+
+### Suggested walkthrough
+
+| Role       | Features to review                                                                                  |
+| ---------- | --------------------------------------------------------------------------------------------------- |
+| Customer   | Browse the menu, manage the cart, place an order, view order history, and edit a profile.           |
+| Admin      | Manage menu items and inventory, process orders, and assign delivery riders.                        |
+| Rider      | Update availability, view assigned deliveries, upload delivery proof, and review delivery history.  |
+| SuperAdmin | Review dashboards and reports, manage accounts, and configure recipes, quotas, and payment methods. |
+
+For a coordinated delivery test, create a labeled customer order, process and assign it to `review_rider` as Admin, then sign in as Rider to inspect the assigned delivery. The reviewer rider starts without assigned orders. Google sign-in and email recovery require provider configuration; use username/password sign-in for this walkthrough.
+
 ## Run locally
 
 Run these commands from the project root (`TasteNet PERN Stack`). The working local PostgreSQL connection is stored in ignored `backend/.env`. Keep that file private.
