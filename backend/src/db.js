@@ -3,6 +3,12 @@ import { readFileSync } from "node:fs";
 
 export function connectionOptions(databaseUrl) {
   const url = new URL(databaseUrl);
+  if (url.hostname.endsWith(".neon.tech")) {
+    // Neon uses public certificate authorities; require hostname verification.
+    url.searchParams.set("sslmode", "verify-full");
+    url.searchParams.delete("uselibpqcompat");
+    url.searchParams.delete("ssl");
+  }
   if (/(?:\.pooler\.supabase\.com|\.supabase\.co)$/.test(url.hostname)) {
     // pg URL SSL parameters replace the explicit ssl object, including its CA.
     for (const key of [

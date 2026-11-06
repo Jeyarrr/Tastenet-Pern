@@ -1,0 +1,101 @@
+/* Glass finish over the original TasteNet palette and layout. */
+:is(.original-shell, .original-super-shell, .original-rider-shell) .content {
+  background: #fffaf3;
+}
+:is(.original-shell, .original-super-shell, .original-rider-shell)
+  .content
+  :is(
+    .stat-card,
+    .chart-box,
+    .side-box,
+    .migration-card,
+    .settings-card,
+    .rm-panel,
+    .active-delivery-card,
+    .status-card,
+    .account-profile-panel
+  ) {
+  background: linear-gradient(135deg, #ffffffeb, #fffaf3e6);
+  border: 1px solid #e2d1d1;
+  box-shadow:
+    0 8px 24px #6b0d1e0c,
+    inset 0 1px 0 #fff;
+}
+/* Blur is restricted to small, static surfaces; never blur scrolling panels. */
+@supports (backdrop-filter: blur(6px)) {
+  :is(.original-shell, .original-super-shell, .original-rider-shell)
+    .content
+    .stat-card {
+    backdrop-filter: blur(6px);
+  }
+}
+/* Moving a large panel under the pointer creates hover/scroll feedback loops. */
+#root
+  .original-reports
+  :is(.stat-card, .chart-box, .status-item, .restaurant-item, .menu-table-box),
+#root .original-settings .settings-card {
+  transform: none !important;
+  animation: none !important;
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease !important;
+  backdrop-filter: none;
+}
+#root .content:has(.original-reports),
+#root .content > .original-reports {
+  animation: none !important;
+  transform: none !important;
+}
+#root .original-tickets .ticket-card {
+  background: #ffffffed !important;
+  color: #4a0e0e !important;
+  border-color: #e2d1d1 !important;
+}
+/* A single size controls both dimensions, including in flex rows and dialogs. */
+.account-avatar {
+  --avatar-size: 44px;
+  width: var(--avatar-size);
+  height: var(--avatar-size);
+  min-width: var(--avatar-size);
+  max-width: var(--avatar-size);
+  flex: 0 0 var(--avatar-size);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  align-self: center;
+}
+.account-avatar.large {
+  --avatar-size: 76px;
+}
+.account-photo-button .account-avatar {
+  --avatar-size: 88px;
+  width: var(--avatar-size);
+  height: var(--avatar-size);
+  flex-basis: var(--avatar-size);
+}
+#overlays .account-photo-preview .account-avatar {
+  --avatar-size: min(260px, 65vw);
+}
+.account-avatar img {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+}
+.v2-chart-readout {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 32px;
+  font-size: 12px;
+  color: #8a6d6d;
+}
+.migration-revenue-svg circle:focus-visible {
+  outline: 2px solid #6b0d1e;
+  outline-offset: 4px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .v2-revenue-chart * {
+    transition: none !important;
+    animation: none !important;
+  }
+}

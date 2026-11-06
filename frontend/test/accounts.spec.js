@@ -343,8 +343,9 @@ test("superadmin account status dialogs require password for customers, riders a
     writes.filter((body) => body.currentPassword === "Synthetic-Password1!"),
   ).toHaveLength(3);
   const card = page.locator(".settings-card").first();
+  const bounds = await card.boundingBox();
   await card.hover({
-    position: { x: 10, y: (await card.boundingBox()).height - 2 },
+    position: { x: bounds.width / 2, y: bounds.height - 2 },
   });
   await expect(card).toHaveCSS("transform", "none");
 });

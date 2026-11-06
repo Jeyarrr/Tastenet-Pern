@@ -8,7 +8,7 @@ import { createSession } from "../src/services/sessions.js";
 
 const config = readConfig();
 const db = createPool(config.DATABASE_URL);
-const base = `http://localhost:${config.PORT}`;
+const base = process.env.SMOKE_BASE_URL || `http://localhost:${config.PORT}`;
 const tokens = [];
 try {
   assert.equal((await fetch(`${base}/health/ready`)).status, 200);

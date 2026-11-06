@@ -8,16 +8,27 @@ import {
   provisionApplicationRole,
 } from "../src/services/application-role.js";
 
-const environmentFile = new URL("../.env.production.local", import.meta.url);
+const neon = process.argv.includes("--neon");
+const environmentFile = new URL(
+  neon ? "../.env.neon.local" : "../.env.production.local",
+  import.meta.url,
+);
 let owner;
 let app;
 let transaction = false;
 try {
   const contents = await readFile(environmentFile, "utf8");
   const env = dotenv.parse(contents);
-  const ownerUrl = new URL(env.DATABASE_URL);
-  if (!/(?:\.pooler\.supabase\.com|\.supabase\.co)$/.test(ownerUrl.hostname))
-    throw new Error("Owner connection must target the Supabase project");
+  const ownerUrl = new URL(neon ? env.DIRECT_DATABASE_URL : env.DATABASE_URL);
+  if (
+    neon
+      ? !ownerUrl.hostname.endsWith(".neon.tech") ||
+        ownerUrl.hostname.includes("-pooler.")
+      : !/(?:\.pooler\.supabase\.com|\.supabase\.co)$/.test(ownerUrl.hostname)
+  )
+    throw new Error(
+      "Owner connection must target the selected provider (direct connection for Neon)",
+    );
   ownerUrl.searchParams.set("sslmode", "verify-full");
   owner = new pg.Client(connectionOptions(ownerUrl.toString()));
   await owner.connect();
@@ -25,7 +36,16 @@ try {
   const password = savedUrl
     ? decodeURIComponent(savedUrl.password)
     : randomBytes(32).toString("hex");
-  const url = applicationConnectionUrl(ownerUrl.toString(), password);
+  const appOwnerUrl = neon ? new URL(env.DATABASE_URL) : ownerUrl;
+  if (
+    neon &&
+    (appOwnerUrl.hostname.replace("-pooler.", ".") !== ownerUrl.hostname ||
+      appOwnerUrl.pathname !== ownerUrl.pathname)
+  )
+    throw new Error(
+      "Pooled and direct Neon connections must target the same database",
+    );
+  const url = applicationConnectionUrl(appOwnerUrl.toString(), password);
   if (savedUrl && savedUrl.toString() !== url)
     throw new Error(
       "Saved application URL must match the owner project and use verified TLS",

@@ -6,6 +6,8 @@
     "node": "24.x"
   },
   "scripts": {
+    "db:transfer-neon": "npm --prefix backend run db:transfer-neon --",
+    "dev": "concurrently --kill-others --names API,WEB \"npm run server\" \"npm run client\"",
     "db:transfer-supabase": "npm --prefix backend run db:transfer-supabase",
     "lint": "eslint . --max-warnings=0",
     "format": "prettier --write .",
@@ -24,6 +26,7 @@
   },
   "devDependencies": {
     "@eslint/js": "9.39.5",
+    "concurrently": "^10.0.6",
     "eslint": "9.39.5",
     "eslint-plugin-react": "7.37.5",
     "globals": "17.13.0",

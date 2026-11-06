@@ -35,20 +35,16 @@ For a coordinated delivery test, create a labeled customer order, process and as
 Run these commands from the project root (`TasteNet PERN Stack`). The working local PostgreSQL connection is stored in ignored `backend/.env`. Keep that file private.
 
 ```powershell
-npm run server
+npm run dev
 ```
 
-In a second terminal, also in the project root:
-
-```powershell
-npm run client
-```
+This starts the API and frontend together. Press Ctrl+C to stop both. Stop any previously running server/client terminals first to avoid port conflicts. You can still run `npm run server` and `npm run client` in separate terminals if preferred.
 
 Open `http://localhost:5173`. The Vite development server proxies `/api` to the backend on port 4000. Health checks are at `http://localhost:4000/health/live` and `/health/ready`.
 
 Vite may use port 5174 if 5173 is already occupied by another local instance. Local development accepts browser requests from ports 5173 and 5174; production accepts only the configured `CLIENT_ORIGIN`.
 
-If dependencies have not been installed on a fresh checkout, first run `npm ci`, `npm --prefix backend ci`, and `npm --prefix frontend ci`. Keep both server terminals open while using the app; press Ctrl+C in each terminal to stop it.
+If dependencies have not been installed on a fresh checkout, first run `npm ci`, `npm --prefix backend ci`, and `npm --prefix frontend ci`. Keep the development terminal open while using the app.
 
 The UI now ports the burgundy and gold design from [Jeyarrr/TasteNet](https://github.com/Jeyarrr/TasteNet), commit `a7ba463`, including original CSS, logos, food images, website sections, and the role sidebars. Open `/` for the public website or `/login` to sign in. Customer, Admin, Rider, and SuperAdmin accounts automatically open their own interface. See [design port notes](frontend/DESIGN_PORT.md).
 
