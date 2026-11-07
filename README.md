@@ -32,6 +32,8 @@ For a coordinated delivery test, create a labeled customer order, process and as
 
 ## Run locally
 
+Use `npm run clean` to remove generated builds, test reports, coverage and old development logs. Preview the files first with `npm run clean -- --dry-run`. The next build or test recreates its output. Original images are kept in `frontend/public/original-assets`.
+
 Run these commands from the project root (`TasteNet PERN Stack`). The working local PostgreSQL connection is stored in ignored `backend/.env`. Keep that file private.
 
 ```powershell

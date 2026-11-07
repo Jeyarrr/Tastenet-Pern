@@ -9,7 +9,6 @@ const output = path.resolve("src/original");
 const pages = {
   login: "Login.aspx",
   register: "Register.aspx",
-  landing: "LandingPage.aspx",
   customer: "Users/Customer/CustomerPortal.aspx",
   shell: "MasterPages/Admin.Master",
   "super-shell": "MasterPages/SuperAdmin.Master",

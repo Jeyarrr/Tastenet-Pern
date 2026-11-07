@@ -6,6 +6,7 @@
     "node": "24.x"
   },
   "scripts": {
+    "clean": "node scripts/clean.mjs",
     "db:transfer-neon": "npm --prefix backend run db:transfer-neon --",
     "dev": "concurrently --kill-others --names API,WEB \"npm run server\" \"npm run client\"",
     "db:transfer-supabase": "npm --prefix backend run db:transfer-supabase",
